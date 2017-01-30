@@ -188,6 +188,7 @@ namespace builtins {
     BanInfo      banInfo;
     BanList      banList;
     BanUser      banUser;
+	Bots		 bots; // AndyStutz
     CancelVote   cancelVote;
     Chicken      chicken;
     CrazyGravity crazygravity;
@@ -232,6 +233,7 @@ namespace builtins {
     Revive       revive;
     Seen         seen;
     SetLevel     setLevel;
+	Setvar		 setvar;
     Shake        shake;
     Shuffle      shuffle;
     Slap         slap;
