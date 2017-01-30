@@ -4372,6 +4372,7 @@ FireWeapon
 ===============
 */
 void FireWeapon( gentity_t *ent ) {
+	int iCount, iDeathsMinusKills, iFinalDelay; // AndyStutz
 	float	aimSpreadScale;
 	int		shots = 1;
 	gentity_t *pFiredShot = 0; // Omni-bot To tell bots about projectiles
@@ -4602,6 +4603,51 @@ void FireWeapon( gentity_t *ent ) {
 		Weapon_M97( ent );
 		break;
 	case WP_PANZERFAUST:
+
+		// AndyStutz - Changing weapon ready time to depend on kills and deaths
+		iCount = 2250; // starts out at one shot every xxxx milliseconds
+		iDeathsMinusKills = 1; // Default to 1 in case kills is more than deaths
+
+		//G_LogPrintf( "Deaths: %d, Kills: %d\n", ent->client->sess.deaths, ent->client->sess.kills);
+		// If deaths is greater than kills
+		//if (ent->client->sess.deathsforpanzerreload > ent->client->sess.kills)
+			//iDeathsMinusKills = ent->client->sess.deathsforpanzerreload - ent->client->sess.kills;
+
+		// This simply makes panzer reload faster with each death, regardless
+		// of how many kills you have
+		// Changing to simply move the delay down 50 milliseconds with each death until you
+		// get to 50.
+		/*
+		if ((ent->client->sess.deathsforpanzerreload * 50) < iCount)
+			ent->client->ps.weaponTime=(int)(iCount - (ent->client->sess.deathsforpanzerreload * 50));
+		else
+			ent->client->ps.weaponTime=50;
+		*/
+
+		// Changing to make first 5 deaths decrease by 250 milliseconds to see a more significant
+		// change early.  Then we'll start doing 50 milliseconds at a time after that...
+		if (ent->client->sess.deathsforpanzerreload < 5) {
+			iFinalDelay = iCount - (int)(ent->client->sess.deathsforpanzerreload * 250);
+		}
+		else {
+			// Take 1250 for first 5 deaths and then another 50 for each additional death beyond that
+			// If final number < 25, set to 25 milliseconds as final.
+			iFinalDelay = iCount - (int)(1250 + ((ent->client->sess.deathsforpanzerreload - 5) * 50));
+		}
+
+		if (iFinalDelay < 25)
+			iFinalDelay = 25;
+
+		ent->client->ps.weaponTime = iFinalDelay;
+			
+		//ent->client->ps.weaponTime=(int)(iCount / (ent->client->sess.deathsforpanzerreload+1));
+
+		// This makes panzer reload faster only if your death count is higher than
+		// your kill count
+		//ent->client->ps.weaponTime=(int)(iCount / iDeathsMinusKills);
+
+		// End AndyStutz
+
 		if( level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam-1] ) {
 			ent->client->ps.classWeaponTime = level.time - level.soldierChargeTime[ent->client->sess.sessionTeam-1];
 		}
@@ -4615,9 +4661,16 @@ void FireWeapon( gentity_t *ent ) {
 
 		pFiredShot = Weapon_Panzerfaust_Fire(ent);
 		if( ent->client ) {
-			vec3_t forward;
-			AngleVectors (ent->client->ps.viewangles, forward, NULL, NULL);
-			VectorMA (ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
+			// AndyStutz - Removing recoil for panzers by commenting the following 3 lines...
+			// AndyStutz - Updating now and enabling/disabling recoil based on session variable
+			// panzerrecoil value set to true or false
+			if (ent->client->sess.panzerrecoil)
+			{
+				vec3_t forward;
+				AngleVectors (ent->client->ps.viewangles, forward, NULL, NULL);
+				VectorMA (ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
+			}
+			// End AndyStutz
 		}
 		break;
 	case WP_GPG40:
