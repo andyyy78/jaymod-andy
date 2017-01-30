@@ -520,6 +520,9 @@ typedef struct {
 	int				team;
 	int				playerClass;		// NERVE - SMF
 	int				respawnsLeft;		// NERVE - SMF
+	// AndyStutz - Adding kills & deaths to track for updating/displaying in hud
+	int				kills;
+	int				deaths;
 } score_t;
 
 // each client has an associated clientInfo_t
