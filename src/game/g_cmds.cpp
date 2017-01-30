@@ -5,6 +5,29 @@ void BotDebug(int clientNum);
 void GetBotAutonomies(int clientNum, int *weapAutonomy, int *moveAutonomy);	
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t** teamNum);
 
+
+// AndyStutz - moving this function up top so we can call it in 
+// G_SendScore method below...
+void Cmd_IntermissionPlayerKillsDeaths_f ( gentity_t* ent ) {
+	char buffer[1024];
+	int i;
+
+	if( !ent || !ent->client ) {
+		return;
+	}
+
+	Q_strncpyz( buffer, "impkd ", sizeof( buffer ) );
+	for( i = 0; i < MAX_CLIENTS; i++ ) {
+		if( g_entities[i].inuse ) {
+			Q_strcat( buffer, sizeof( buffer ), va( "%i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths ) );
+		} else {
+			Q_strcat( buffer, sizeof( buffer ), "0 0 " );
+		}
+	}
+
+	trap_SendServerCommand( ent-g_entities, buffer );
+}
+
 /*
 ==================
 G_SendScore
@@ -13,6 +36,18 @@ Sends current scoreboard information
 ==================
 */
 void G_SendScore( gentity_t *ent ) {
+
+	// AndyStutz
+	// Update kills/deaths stats so they're available to clients
+	// This is specifically for displaying K/D in the Jaymod Hud
+	// There might be a better way to do this, but this seems to 
+	// work good for now.
+
+	Cmd_IntermissionPlayerKillsDeaths_f(ent);
+
+	// End AndyStutz
+	
+
 	char		entry[128];
 	int			i;
 	gclient_t	*cl;
@@ -580,6 +615,8 @@ void Cmd_Kill_f( gentity_t *ent )
 
 	// Jaybird - #42 - /kill counts as a death
 	ent->client->sess.deaths++;
+	// AndyStutz
+	ent->client->sess.deathsforpanzerreload++;
 }
 
 void G_TeamDataForString( const char* teamstr, int clientNum, team_t* team, spectatorState_t* sState, int* specClient ) {
@@ -3276,25 +3313,6 @@ void Cmd_IntermissionReady_f ( gentity_t* ent ) {
 	G_MakeReady( ent );
 }
 
-void Cmd_IntermissionPlayerKillsDeaths_f ( gentity_t* ent ) {
-	char buffer[1024];
-	int i;
-
-	if( !ent || !ent->client ) {
-		return;
-	}
-
-	Q_strncpyz( buffer, "impkd ", sizeof( buffer ) );
-	for( i = 0; i < MAX_CLIENTS; i++ ) {
-		if( g_entities[i].inuse ) {
-			Q_strcat( buffer, sizeof( buffer ), va( "%i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths ) );
-		} else {
-			Q_strcat( buffer, sizeof( buffer ), "0 0 " );
-		}
-	}
-
-	trap_SendServerCommand( ent-g_entities, buffer );
-}
 
 void G_CalcClientAccuracies( void ) {
 	int i, j;
