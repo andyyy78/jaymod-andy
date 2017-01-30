@@ -15,6 +15,7 @@ WM_DrawObjectives
 
 #define INFO_PLAYER_WIDTH		134
 #define INFO_SCORE_WIDTH		64
+#define INFO_KD_WIDTH			60 // AndyStutz - Kills/Deaths width
 #define INFO_XP_WIDTH			44
 #define INFO_CLASS_WIDTH		42
 #define INFO_LATENCY_WIDTH		40
@@ -22,7 +23,8 @@ WM_DrawObjectives
 #define INFO_TEAM_HEIGHT		24
 #define INFO_BORDER				2
 #define INFO_LINE_HEIGHT		30
-#define INFO_TOTAL_WIDTH		(INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
+//#define INFO_TOTAL_WIDTH		(INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
+#define INFO_TOTAL_WIDTH		(INFO_PLAYER_WIDTH + INFO_KD_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
 
 int WM_DrawObjectives( int x, int y, int width, float fade ) {
 	const char *s, *str;
@@ -196,6 +198,8 @@ static void WM_DrawClientScore( int x, int y, score_t *score, float *color, floa
 	clientInfo_t *ci;
 	char buf[64];
 
+	
+
 	if ( y + SMALLCHAR_HEIGHT >= 470 )
 		return;
 
@@ -215,14 +219,17 @@ static void WM_DrawClientScore( int x, int y, score_t *score, float *color, floa
 		if ( score->ping < 0 || (ci->team == TEAM_SPECTATOR && ci->shoutcaster)) {
             // Connecting or shoutcasters get simpler row
 			int width;
-			width = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
+			//width = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
+			width = INFO_KD_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
 
 			CG_FillRect( tempx, y + 1, width - INFO_BORDER, SMALLCHAR_HEIGHT - 1, hcolor );
 			tempx += width;
 		} else {
             // Class box
-			CG_FillRect( tempx, y + 1, INFO_CLASS_WIDTH - INFO_BORDER, SMALLCHAR_HEIGHT - 1, hcolor );
-			tempx += INFO_CLASS_WIDTH;
+			//CG_FillRect( tempx, y + 1, INFO_CLASS_WIDTH - INFO_BORDER, SMALLCHAR_HEIGHT - 1, hcolor );
+			CG_FillRect( tempx, y + 1, INFO_KD_WIDTH - INFO_BORDER, SMALLCHAR_HEIGHT - 1, hcolor );
+			//tempx += INFO_CLASS_WIDTH;
+			tempx += INFO_KD_WIDTH;
 
 			if( cg_gameType.integer == GT_WOLF_LMS ) {
                 // LMS gets score
@@ -323,7 +330,8 @@ static void WM_DrawClientScore( int x, int y, score_t *score, float *color, floa
 		const char *s;
 		int w, totalwidth;
 
-		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		//totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		totalwidth = INFO_KD_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
 		 // CHRUKER: b031 - Show connecting people as connecting
 		s = CG_TranslateString( (ci->team == TEAM_SPECTATOR && ci->shoutcaster)?"^3SHOUTCASTER":"^2CONNECTING" );
@@ -336,14 +344,20 @@ static void WM_DrawClientScore( int x, int y, score_t *score, float *color, floa
         // Spectator for class
 		CG_DrawSmallString( int(tempx), y, CG_TranslateString("^3SPEC"), fade);
 	}
-	else if ( cg.snap->ps.persistant[PERS_TEAM] == ci->team || CG_mvMergedClientLocate(score->client) ) {
+	// AndyStutz - Want to draw kills/deaths for both teams, not just the current clients team
+	//else if ( cg.snap->ps.persistant[PERS_TEAM] == ci->team || CG_mvMergedClientLocate(score->client) ) {
+	else {
         // Draw class
-		CG_DrawSmallString( int(tempx), y, CG_TranslateString( BG_ShortClassnameForNumber( score->playerClass ) ), fade );
+		//CG_DrawSmallString( int(tempx), y, CG_TranslateString( BG_ShortClassnameForNumber( score->playerClass ) ), fade );
+		// AndyStutz - changing class name to kills/deaths
+		CG_DrawSmallString( int(tempx), y, CG_TranslateString(va( "^2%3i^7/^1%i", score->kills, score->deaths )), fade );
 	}
-	tempx += INFO_CLASS_WIDTH;
+	//tempx += INFO_CLASS_WIDTH;
+	tempx += INFO_KD_WIDTH;
 
     // XP
-	CG_DrawSmallString( int(tempx), y, va( "%5i", score->score ), fade );
+	//CG_DrawSmallString( int(tempx), y, va( "%5i", score->score ), fade );
+	CG_DrawSmallString( int(tempx + 1 * SMALLCHAR_WIDTH), y, va( "%i", score->score ), fade );
 	if( cg_gameType.integer == GT_WOLF_LMS ) {
 		tempx += INFO_SCORE_WIDTH;
 	} else {
@@ -351,7 +365,10 @@ static void WM_DrawClientScore( int x, int y, score_t *score, float *color, floa
 	}
 
     // Ping
-	CG_DrawSmallString( int(tempx), y, va( "%4i", score->ping ), fade );
+	if (score->ping == 0)
+		CG_DrawSmallString( int(tempx), y, va( "%4s", "Bot" ), fade );
+	else
+		CG_DrawSmallString( int(tempx), y, va( "%4i", score->ping ), fade );
 	tempx += INFO_LATENCY_WIDTH;
 
     // Lives left
@@ -404,13 +421,16 @@ static void WM_DrawClientScore_Small( int x, int y, score_t *score, float *color
 
 		if ( score->ping < 0 || (ci->team == TEAM_SPECTATOR && ci->shoutcaster)) {
 			int width;
-			width = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
+			//width = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
+			width = INFO_KD_WIDTH+ INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
 
 			CG_FillRect( tempx, y + 1, width - INFO_BORDER, MINICHAR_HEIGHT - 1, hcolor );
 			tempx += width;
 		} else {
-			CG_FillRect( tempx, y + 1, INFO_CLASS_WIDTH - INFO_BORDER, MINICHAR_HEIGHT - 1, hcolor );
-			tempx += INFO_CLASS_WIDTH;
+			//CG_FillRect( tempx, y + 1, INFO_CLASS_WIDTH - INFO_BORDER, MINICHAR_HEIGHT - 1, hcolor );
+			CG_FillRect( tempx, y + 1, INFO_KD_WIDTH - INFO_BORDER, MINICHAR_HEIGHT - 1, hcolor );
+			//tempx += INFO_CLASS_WIDTH;
+			tempx += INFO_KD_WIDTH;
 
 			if( cg_gameType.integer == GT_WOLF_LMS ) {
 				CG_FillRect( tempx, y + 1, INFO_SCORE_WIDTH - INFO_BORDER, MINICHAR_HEIGHT - 1, hcolor );
@@ -511,7 +531,8 @@ static void WM_DrawClientScore_Small( int x, int y, score_t *score, float *color
 		const char *s;
 		int w, totalwidth;
 
-		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		//totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		totalwidth = INFO_KD_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
 		s = CG_TranslateString( (ci->team == TEAM_SPECTATOR && ci->shoutcaster)?"^3SHOUTCASTER":"^2CONNECTING" );
 		w = CG_DrawStrlen( s ) * MINICHAR_WIDTH;
@@ -524,20 +545,30 @@ static void WM_DrawClientScore_Small( int x, int y, score_t *score, float *color
 	else if ( ci->team == TEAM_SPECTATOR) {
 		CG_DrawStringExt( int(tempx), y, CG_TranslateString("^3SPEC"), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 	}
-	else if ( cg.snap->ps.persistant[PERS_TEAM] == ci->team ) {
-		CG_DrawStringExt(	int(tempx), y, CG_TranslateString( BG_ShortClassnameForNumber( score->playerClass ) ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
+	// AndyStutz - Want to draw kills/deaths for both teams, not just the current clients team
+	//else if ( cg.snap->ps.persistant[PERS_TEAM] == ci->team ) {
+	else {
+		//CG_DrawStringExt(	int(tempx), y, CG_TranslateString( BG_ShortClassnameForNumber( score->playerClass ) ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
 //		CG_DrawSmallString( tempx, y, CG_TranslateString( s ), fade );
+		// AndyStutz - changing class name to kills/deaths
+		CG_DrawStringExt( int(tempx), y, CG_TranslateString(va( "^2%3i^7/^1%i", score->kills, score->deaths )), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+		//CG_DrawStringExt( int(tempx), y, va( "^2%2i^7/^1%i", score->kills, score->deaths ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
 	}
-	tempx += INFO_CLASS_WIDTH;
+	//tempx += INFO_CLASS_WIDTH;
+	tempx += INFO_KD_WIDTH;
 
-	CG_DrawStringExt( int(tempx), y, va( "%3i", score->score ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
+	//CG_DrawStringExt( int(tempx), y, va( "%3i", score->score ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
+	CG_DrawStringExt( int(tempx + 1 * SMALLCHAR_WIDTH), y, va( "%i", score->score ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
 	if( cg_gameType.integer == GT_WOLF_LMS ) {
 		tempx += INFO_SCORE_WIDTH;
 	} else {
 		tempx += INFO_XP_WIDTH;
 	}
 
-	CG_DrawStringExt( int(tempx), y, va( "%4i", score->ping ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
+	if (score->ping == 0)
+		CG_DrawStringExt( int(tempx), y, va( "%4s", "Bot" ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
+	else
+		CG_DrawStringExt( int(tempx), y, va( "%4i", score->ping ), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0 );
 	tempx += INFO_LATENCY_WIDTH;
 
 	if( cg_gameType.integer != GT_WOLF_LMS ) {
@@ -611,7 +642,8 @@ static int WM_TeamScoreboard( int x, int y, team_t team, float fade, int maxrows
 	vec4_t tclr =	{ 0.6f,		0.6f,		0.6f,		1.0f };
 
 	height = SMALLCHAR_HEIGHT * maxrows;
-	width = INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
+	//width = INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
+	width = INFO_PLAYER_WIDTH + INFO_KD_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
 
 	// Jaybird - 10 px change
 	CG_FillRect( x-5, y-12, width+5, 31, clrUiBack );
@@ -689,9 +721,12 @@ static int WM_TeamScoreboard( int x, int y, team_t team, float fade, int maxrows
 	// draw player info headings
 	CG_DrawSmallString( int(tempx), y, CG_TranslateString( "Name" ), fade );
 	tempx += INFO_PLAYER_WIDTH;
-
-	CG_DrawSmallString( int(tempx), y, CG_TranslateString( "Class" ), fade );
-	tempx += INFO_CLASS_WIDTH;
+	
+	// AndyStutz - changes for kills/deaths
+	//CG_DrawSmallString( int(tempx), y, CG_TranslateString( "Class" ), fade );
+	CG_DrawSmallString( int(tempx), y, CG_TranslateString( va("%5s", "K/D") ), fade );
+	//tempx += INFO_CLASS_WIDTH;
+	tempx += INFO_KD_WIDTH;
 
 	if( cgs.gametype == GT_WOLF_LMS ) {
 		CG_DrawSmallString( int(tempx), y, CG_TranslateString( "Score" ), fade );
