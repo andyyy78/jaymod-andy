@@ -64,6 +64,10 @@ static void CG_ParseScore( team_t team ) {
 		cgs.clientinfo[ cg.scores[i].client ].powerups = powerups;
 
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
+		
+		// AndyStutz - Adding kills and deaths in order to track/update hud
+		cg.scores[i].kills = cgs.clientinfo[cg.scores[i].client].kills;
+		cg.scores[i].deaths = cgs.clientinfo[cg.scores[i].client].deaths;
 
 		cg.numScores++;
 	}
