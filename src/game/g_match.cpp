@@ -256,6 +256,8 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 		if(targ->health <= 0) {
 			attacker->client->sess.kills++;
 			targ->client->sess.deaths++;
+			// AndyStutz
+			targ->client->sess.deathsforpanzerreload++;
 		}
 	}
 
