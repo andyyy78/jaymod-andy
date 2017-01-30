@@ -670,6 +670,12 @@ typedef struct {
 	int			damage_given;
 	int			damage_received;
 	int			deaths;
+	
+	// AndyStutz - used for keeping fast panzers between map loads and team switches
+	int			deathsforpanzerreload;
+	// AndyStutz - used for turning panzer recoil on/off
+	bool		panzerrecoil;
+
 	int			game_points;
 	int			kills;
 	int			referee;
