@@ -31,7 +31,9 @@ void G_WriteClientSessionData( gclient_t *client, qboolean restart )
 	// - Added auto mute
 	// - Added revives
 	// - Added headshots
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	// AndyStutz (added an extra %i due to deathsforpanzerreload)
+	// AndyStutz (added an extra %i due to panzerrecoil)
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 		client->sess.sessionTeam,
 		client->sess.spectatorTime,
 		client->sess.spectatorState,
@@ -46,6 +48,9 @@ void G_WriteClientSessionData( gclient_t *client, qboolean restart )
 		// OSP
 		client->sess.coach_team,
 		client->sess.deaths,
+		// AndyStutz
+		client->sess.deathsforpanzerreload,
+		client->sess.panzerrecoil,
 		client->sess.game_points,
 		client->sess.kills,
 		client->sess.referee,
@@ -182,7 +187,9 @@ void G_ReadSessionData( gclient_t *client )
 	// - Added automute
 	// - Added revives
 	// - Added headshots
-	sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	// AndyStutz (added an extra %i due to deathsforpanzerreload)
+	// AndyStutz (added an extra %i due to panzerrecoil)
+	sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 		(int *)&client->sess.sessionTeam,
 		&client->sess.spectatorTime,
 		(int *)&client->sess.spectatorState,
@@ -197,6 +204,9 @@ void G_ReadSessionData( gclient_t *client )
 		// OSP
 		&client->sess.coach_team,
 		&client->sess.deaths,
+		// AndyStutz
+		&client->sess.deathsforpanzerreload,
+		&client->sess.panzerrecoil,
 		&client->sess.game_points,
 		&client->sess.kills,
 		&client->sess.referee,
