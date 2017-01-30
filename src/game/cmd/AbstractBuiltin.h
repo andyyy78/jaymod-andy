@@ -23,6 +23,7 @@ private:
 #include <game/cmd/BanInfo.h>
 #include <game/cmd/BanList.h>
 #include <game/cmd/BanUser.h>
+#include <game/cmd/Bots.h>
 #include <game/cmd/CancelVote.h>
 #include <game/cmd/Chicken.h>
 #include <game/cmd/CrazyGravity.h>
@@ -66,6 +67,7 @@ private:
 #include <game/cmd/Restart.h>
 #include <game/cmd/Revive.h>
 #include <game/cmd/Seen.h>
+#include <game/cmd/Setvar.h>
 #include <game/cmd/SetLevel.h>
 #include <game/cmd/Shake.h>
 #include <game/cmd/Shuffle.h>
@@ -100,6 +102,7 @@ namespace builtins {
     extern BanInfo      banInfo;
     extern BanList      banList;
     extern BanUser      banUser;
+	extern Bots			bots;
     extern CancelVote   cancelVote;
     extern CrazyGravity crazygravity;
     extern CryBaby      crybaby;
@@ -143,6 +146,7 @@ namespace builtins {
     extern Revive       revive;
     extern Seen         seen;
     extern SetLevel     setLevel;
+	extern Setvar		setvar;
     extern Shake        shake;
     extern Shuffle      shuffle;
     extern Slap         slap;
