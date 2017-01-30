@@ -2257,13 +2257,20 @@ void ClientBegin( int clientNum )
 	client->ps.persistant[PERS_SPAWN_COUNT] = spawn_count;
 	client->ps.persistant[PERS_RESPAWNS_LEFT] = lives_left;
 	
-
 	client->pers.complaintClient = -1;
 	client->pers.complaintEndTime = -1;
 
 	//Omni-bot
 	client->sess.botSuicide = qfalse;
 	client->sess.botPush = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
+
+	// AndyStutz - resetting session kills/deaths between team
+	// switches or map changes.  We still use session variable
+	// deathsforpanzerreload for tracking fast panzer reloads as
+	// we don't reset this between team switches or map loads
+	client->sess.kills = 0;
+	client->sess.deaths = 0;
+	// End AndyStutz
 
 	// Jaybird - shrubbot shortcuts
     Q_strncpyz(client->pers.lastammo, "nobody", sizeof(client->pers.lastammo));
