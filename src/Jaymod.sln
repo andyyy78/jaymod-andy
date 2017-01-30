@@ -10,19 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua\lua.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "base\base.vcxproj", "{AE72C3FA-551F-48C5-963A-4E92EC0298F9}"
 EndProject
-Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "etded", "..\..\..\..\..\..\Program Files (x86)\Wolfenstein - Enemy Territory\etded.exe", "{D5D40C6D-F958-4D63-9224-0E65F712491B}"
-	ProjectSection(DebuggerProjectSystem) = preProject
-		PortSupplier = 00000000-0000-0000-0000-000000000000
-		Executable = C:\Program Files (x86)\Wolfenstein - Enemy Territory\etded.exe
-		RemoteMachine = HPLAPTOP
-		StartingDirectory = C:\Program Files (x86)\Wolfenstein - Enemy Territory
-		Arguments = +set com_hunkmegs 512 +set fs_game jaymod +exec server.cfg
-		Environment = Default
-		LaunchingEngine = 00000000-0000-0000-0000-000000000000
-		LaunchSQLEngine = No
-		AttachLaunchAction = No
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -87,12 +74,6 @@ Global
 		{AE72C3FA-551F-48C5-963A-4E92EC0298F9}.Release|Win32.ActiveCfg = Release|Win32
 		{AE72C3FA-551F-48C5-963A-4E92EC0298F9}.Release|Win32.Build.0 = Release|Win32
 		{AE72C3FA-551F-48C5-963A-4E92EC0298F9}.Release|x86.ActiveCfg = Release|Win32
-		{D5D40C6D-F958-4D63-9224-0E65F712491B}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{D5D40C6D-F958-4D63-9224-0E65F712491B}.Debug|Win32.ActiveCfg = Debug|x86
-		{D5D40C6D-F958-4D63-9224-0E65F712491B}.Debug|x86.ActiveCfg = Debug|x86
-		{D5D40C6D-F958-4D63-9224-0E65F712491B}.Release|Mixed Platforms.ActiveCfg = Debug|x86
-		{D5D40C6D-F958-4D63-9224-0E65F712491B}.Release|Win32.ActiveCfg = Debug|x86
-		{D5D40C6D-F958-4D63-9224-0E65F712491B}.Release|x86.ActiveCfg = Debug|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
