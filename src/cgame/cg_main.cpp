@@ -322,6 +322,10 @@ vmCvar_t	cg_debugDelag;
 vmCvar_t	cg_optimizePrediction;
 //unlagged - client options
 
+// AndyStutz - turning ejecting panzer brass on/off
+vmCvar_t	cg_panzerejectbrass;
+
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -579,6 +583,10 @@ cvarTable_t		cvarTable[] = {
 	{ &cl_wavefilename, "cl_wavefilename", "", CVAR_ROM },
 	{ &cl_waveoffset, "cl_waveoffset", "0", CVAR_ROM },
 	{ &cg_recording_statusline, "cg_recording_statusline", "9", CVAR_ARCHIVE },
+
+	// AndyStutz - Turn panzer brass eject on/off
+	{ &cg_panzerejectbrass, "cg_showpanzerejectbrass", "0", CVAR_ARCHIVE },
+
 };
 
 int		cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
