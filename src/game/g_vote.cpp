@@ -68,6 +68,7 @@ static const vote_reference_t aVoteInfo[] = {
 	{ 0x1ff, "unreferee",	 G_Unreferee_v,		"UNReferee",		" <player_id>^7\n  Elects a player to have admin abilities removed" },
 	{ 0x1ff, "warmupdamage", G_Warmupfire_v,	"Warmup Damage",	" <0|1|2>^7\n  Specifies if players can inflict damage during warmup" },
 	{ 0x1ff, "balancedteams",G_BalancedTeams_v,	"Balanced Teams",	" <0|1>^7\n  Toggles team balance forcing" },
+	{ 0x1ff, "bots",		 G_Bots_v,			"Bots",				" <0|1>^7\n  Adds/Removes bots" },
 	{ 0, 0, NULL, 0 }
 };
 
@@ -887,6 +888,47 @@ int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 	} else {
 		// Team damage (friendlyFire)
 		G_voteSetOnOff("Friendly Fire", "g_friendlyFire");
+	}
+
+	return(G_OK);
+}
+
+// *** Bots ***
+int G_Bots_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if(arg) {
+		return(G_voteProcessOnOff(ent, arg, arg2, fRefereeCmd,
+									!!(g_bots.integer),
+									vote_allow_bots.integer,
+									dwVoteIndex));
+
+	// Vote action (vote has passed)
+	} else {
+		// Add Bots
+		G_voteSetOnOff("Bots", "g_bots");
+
+		if (atoi(level.voteInfo.vote_value))
+		{
+			// Enabled or add bots
+			trap_SendConsoleCommand( EXEC_APPEND, "bot maxbots 10\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 1 1\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 2 1\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 1 2\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 2 2\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 1 3\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 2 3\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 1 4\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 2 4\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 1 5\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot addbot 2 5\n" );
+		}
+		else
+		{
+			// Disabled or kick bots
+			trap_SendConsoleCommand( EXEC_APPEND, "bot maxbots 0\n" );
+			trap_SendConsoleCommand( EXEC_APPEND, "bot kickall\n" );
+		}
 	}
 
 	return(G_OK);
