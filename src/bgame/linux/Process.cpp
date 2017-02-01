@@ -12,6 +12,7 @@
 
 #include <sys/time.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #ifdef _DEBUG
 #ifndef __USE_GNU
