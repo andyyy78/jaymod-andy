@@ -682,6 +682,7 @@ int G_checkServerToggle(vmCvar_t *cv)
 	else if(cv == &g_friendlyFire) nFlag = CV_SVS_FRIENDLYFIRE;
 	else if(cv == &g_antilag) nFlag = CV_SVS_ANTILAG;
 	else if(cv == &g_balancedteams) nFlag = CV_SVS_BALANCEDTEAMS;
+	else if(cv == &g_bots) nFlag = CV_SVS_BOTS;
 	// special case for 2 bits
 	else if(cv == &match_warmupDamage) {
 		if(cv->integer > 0) {
