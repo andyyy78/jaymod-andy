@@ -8282,6 +8282,7 @@ vmCvar_t	ui_weapon;
 vmCvar_t	ui_isSpectator;
 
 vmCvar_t	ui_friendlyFire;
+vmCvar_t	ui_bots;
 
 vmCvar_t	ui_userTimeLimit;
 vmCvar_t	ui_userAlliedRespawnTime;
@@ -8340,6 +8341,7 @@ cvarTable_t		cvarTable[] = {
 
 	// NERVE - SMF
 	{ &ui_friendlyFire, "g_friendlyFire", "1", CVAR_ARCHIVE },
+	{ &ui_bots, "g_bots", "1", CVAR_ARCHIVE },
 
 	{ &ui_userTimeLimit, "ui_userTimeLimit", "0", 0 },
 	{ &ui_userAlliedRespawnTime, "ui_userAlliedRespawnTime", "0", 0 },
@@ -8533,6 +8535,7 @@ cvarTable_t		cvarTable[] = {
 	{ NULL,	"vote_allow_shuffleteamsxp", "1", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_swapteams", "1", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_friendlyfire", "1", CVAR_ARCHIVE },
+	{ NULL,	"vote_allow_bots", "1", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_timelimit", "0", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_warmupdamage", "1", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_antilag", "1", CVAR_ARCHIVE },
@@ -8567,6 +8570,10 @@ cvarTable_t		cvarTable[] = {
     { NULL, "ui_jaymod_repoLCDate",  JAYMOD_repoLCDate,  CVAR_ROM },
     { NULL, "ui_jaymod_repoLCRev",   JAYMOD_repoLCRev,   CVAR_ROM },
     { NULL, "ui_jaymod_repoUUID",    JAYMOD_repoUUID,    CVAR_ROM },
+
+	// AndyStutz - Turns panzer eject brass on/off
+	{ NULL, "cg_showpanzerejectbrass", "0", CVAR_ARCHIVE },
+
 };
 
 int		cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
