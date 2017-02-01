@@ -30,6 +30,7 @@ vmCvar_t	g_gametype;
 vmCvar_t	g_fraglimit;
 vmCvar_t	g_timelimit;
 vmCvar_t	g_friendlyFire;
+vmCvar_t	g_bots;
 vmCvar_t	g_password;
 vmCvar_t	sv_privatepassword;
 vmCvar_t	g_maxclients;
@@ -139,6 +140,7 @@ vmCvar_t		vote_allow_timelimit;
 vmCvar_t		vote_allow_warmupdamage;
 vmCvar_t		vote_allow_balancedteams;
 vmCvar_t		vote_allow_muting;
+vmCvar_t		vote_allow_bots;
 vmCvar_t		vote_limit;
 vmCvar_t		vote_percent;
 vmCvar_t		z_serverflags;
@@ -416,6 +418,7 @@ cvarTable_t		gameCvarTable[] = {
 	{ &g_timelimit, "timelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue },
 
 	{ &g_friendlyFire, "g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
+	{ &g_bots, "g_bots", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
 
 	{ &g_teamForceBalance, "g_teamForceBalance", "0", CVAR_ARCHIVE  },							// NERVE - SMF - merge from team arena
 
@@ -523,6 +526,7 @@ cvarTable_t		gameCvarTable[] = {
 	{ &vote_allow_warmupdamage,	"vote_allow_warmupdamage", "1", 0, 0, qfalse, qfalse },
 	{ &vote_allow_balancedteams,"vote_allow_balancedteams", "1", 0, 0, qfalse, qfalse },
 	{ &vote_allow_muting,		"vote_allow_muting", "1", 0, 0, qfalse, qfalse },
+	{ &vote_allow_bots,			"vote_allow_bots", "1", 0, 0, qfalse, qfalse },
 	{ &vote_limit,		"vote_limit", "5", 0, 0, qfalse, qfalse },
 	{ &vote_percent,	"vote_percent", "50", 0, 0, qfalse, qfalse },
 
@@ -1601,7 +1605,7 @@ void G_UpdateCvars( void )
 						cv->vmCvar == &vote_allow_friendlyfire	|| cv->vmCvar == &vote_allow_timelimit		||
 						cv->vmCvar == &vote_allow_warmupdamage	|| 
 						cv->vmCvar == &vote_allow_balancedteams	|| cv->vmCvar == &vote_allow_muting			||
-						cv->vmCvar == &vote_allow_generic
+						cv->vmCvar == &vote_allow_generic		|| cv->vmCvar == &vote_allow_bots
 					) {
 						fVoteFlags = qtrue;
 					} else {
