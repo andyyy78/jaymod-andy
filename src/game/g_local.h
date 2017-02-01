@@ -1826,6 +1826,7 @@ extern	vmCvar_t	g_inactivity;
 extern	vmCvar_t	g_debugMove;
 extern	vmCvar_t	g_debugAlloc;
 extern	vmCvar_t	g_debugDamage;
+extern  vmCvar_t	g_bots;
 extern	vmCvar_t	voteFlags;
 
 // DHM - Nerve :: The number of complaints allowed before kick/ban
@@ -1951,6 +1952,7 @@ extern vmCvar_t		vote_allow_timelimit;
 extern vmCvar_t		vote_allow_warmupdamage;
 extern vmCvar_t		vote_allow_balancedteams;
 extern vmCvar_t		vote_allow_muting;
+extern vmCvar_t		vote_allow_bots;
 extern vmCvar_t		vote_limit;
 extern vmCvar_t		vote_percent;
 extern vmCvar_t		z_serverflags;
@@ -2601,6 +2603,7 @@ int G_Timelimit_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_Bots_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 
 void G_LinkDebris( void );
 void G_LinkDamageParents( void );
