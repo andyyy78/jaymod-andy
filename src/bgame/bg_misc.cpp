@@ -5110,7 +5110,8 @@ const voteType_t voteToggles[] =
 		{ "vote_allow_muting",			CV_SVF_MUTING },
 		{ "vote_allow_generic",			CV_SVF_GENERIC },
 		{ "vote_allow_matchrestart",	CV_SVF_MATCHRESTART },
-		{ "vote_allow_startmatch",		CV_SVF_STARTMATCH }
+		{ "vote_allow_startmatch",		CV_SVF_STARTMATCH },
+		{ "vote_allow_bots",			CV_SVF_BOTS }
 	};
 
 int numVotesAvailable = sizeof(voteToggles) / sizeof(voteType_t);
