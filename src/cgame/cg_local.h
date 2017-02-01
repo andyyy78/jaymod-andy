@@ -2414,6 +2414,11 @@ extern	vmCvar_t		cg_debugDelag;
 extern	vmCvar_t		cg_optimizePrediction;
 //unlagged - client options
 
+// AndyStutz - Turns panzer brass eject on/off
+extern vmCvar_t			cg_panzerejectbrass;
+
+
+
 //
 // cg_main.c
 //
