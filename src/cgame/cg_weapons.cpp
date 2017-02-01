@@ -301,6 +301,11 @@ CG_PanzerFaustEjectBrass
 ==============
 */
 static void CG_PanzerFaustEjectBrass( centity_t *cent ) {
+	// AndyStutz - return if panzerejectbrass is off
+	// (helps fps by getting rid of ejection image in fast rockets)
+	if (!cg_panzerejectbrass.integer)
+		return;
+
 	localEntity_t	*le;
 	refEntity_t		*re;
 	vec3_t			velocity, xvelocity;
