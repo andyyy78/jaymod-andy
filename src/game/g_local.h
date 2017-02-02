@@ -1692,6 +1692,11 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 qboolean OnSameTeam( gentity_t *ent1, gentity_t *ent2 );
 int Team_ClassForString( char *string );
 
+// AndyStutz - fix for error SP_team_WOLF_objective: exceeded MAX_MULTI_SPAWNTARGETS
+// Taken from: https://github.com/acqu/wet-sdk-plus/commit/857a8d952529ae5bbff9f661b6960ae122019bbb
+// sta acqu-sdk (issue 25): etpub's fix for SP_team_WOLF_objective: exceeded MAX_MULTI_SPAWNTARGETS (16)
+void reset_numobjectives(void);
+// end acqu-sdk (issue 25)
 
 //
 // g_mem.c
