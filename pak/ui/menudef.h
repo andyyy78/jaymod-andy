@@ -418,6 +418,7 @@
 #define CV_SVS_ANTILAG			128
 #define CV_SVS_BALANCEDTEAMS	256
 #define CV_SVS_NEXTMAP			512
+#define CV_SVS_BOTS				1024
 
 // "cg_ui_voteFlags"
 #define CV_SVF_COMP				1
@@ -440,6 +441,7 @@
 #define	CV_SVF_GENERIC			131072
 #define CV_SVF_MATCHRESTART		262144
 #define CV_SVF_STARTMATCH		524288
+#define CV_SVF_BOTS				1048576
 
 // referee level
 #define RL_NONE					0
