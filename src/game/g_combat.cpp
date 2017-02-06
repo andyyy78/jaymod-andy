@@ -536,6 +536,16 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	ent->s.otherEntityNum2 = killer;
 	ent->r.svFlags = SVF_BROADCAST;	// send to everyone
 
+
+	// AndyStutz
+	// If fastpanzerkillspree is on, turn it off and restore all players to
+	// original teams and original fastpanzer settings
+	if (g_fastpanzerkillspreeon && g_fastpanzerkillspreeclientnum == self->client->ps.clientNum) {
+		string buffer = va("!fastpanzerkillspree stop %d\n", self->client->ps.clientNum);
+		trap_SendConsoleCommand( EXEC_APPEND, buffer.c_str() );
+	}
+
+
 	// Jaybird - They're dead.  Adjust their spree info.
 	// G_endKillSpree(self, attacker, meansOfDeath);
 	G_AddLoseSpree( self );
