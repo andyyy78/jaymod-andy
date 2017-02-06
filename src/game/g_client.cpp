@@ -2180,6 +2180,18 @@ ClientConnect( string& outmsg, int clientNum, qboolean firstTime, qboolean isBot
 	// Reset lose spree
 	ent->client->pers.losespreekills = 0;
 
+
+	// AndyStutz - resetting session kills/deaths between map changes.  
+	// We still use session variable deathsforpanzerreload for tracking 
+	// fast panzer reloads as we don't reset this between team switches 
+	// or map loads.  Moved this here instead of ClientBegin as we only
+	// want to reset between map loads, NOT when players change teams
+	// as excellent suggestion from Sn4cky. :D
+	client->sess.kills = 0;
+	client->sess.deaths = 0;
+	// End AndyStutz
+
+
 	// count current clients and rank for scoreboard
 	CalculateRanks();
 
@@ -2263,14 +2275,6 @@ void ClientBegin( int clientNum )
 	//Omni-bot
 	client->sess.botSuicide = qfalse;
 	client->sess.botPush = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
-
-	// AndyStutz - resetting session kills/deaths between team
-	// switches or map changes.  We still use session variable
-	// deathsforpanzerreload for tracking fast panzer reloads as
-	// we don't reset this between team switches or map loads
-	client->sess.kills = 0;
-	client->sess.deaths = 0;
-	// End AndyStutz
 
 	// Jaybird - shrubbot shortcuts
     Q_strncpyz(client->pers.lastammo, "nobody", sizeof(client->pers.lastammo));
@@ -2819,6 +2823,17 @@ void ClientDisconnect( int clientNum ) {
 	if ( !ent->client ) {
 		return;
 	}
+
+
+	// If we're currently in a killing spree and the player disconnecting is
+	// the killing spree player, then we want to stop the killing spree
+	// so players get reset back to their teams.
+	if (g_fastpanzerkillspreeon && g_fastpanzerkillspreeclientnum == ent->client->ps.clientNum)
+	{
+		string buffer = va("!fastpanzerkillspree stop %d\n", ent->client->ps.clientNum);
+		trap_SendConsoleCommand( EXEC_APPEND, buffer.c_str() );
+	}
+
 
 	//////////////////////////////////////////////////////////////////////////
 	Bot_Event_ClientDisConnected(clientNum);
