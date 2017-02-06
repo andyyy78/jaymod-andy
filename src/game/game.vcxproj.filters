@@ -561,6 +561,9 @@
     <ClInclude Include="cmd\Setvar.h">
       <Filter>Header Files\game\cmd</Filter>
     </ClInclude>
+    <ClInclude Include="cmd\FastPanzerKillSpree.h">
+      <Filter>Header Files\game\cmd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bgame\bg_entity_event.h.inc">
@@ -1131,6 +1134,9 @@
       <Filter>Source Files\game\cmd</Filter>
     </ClCompile>
     <ClCompile Include="cmd\Setvar.cpp">
+      <Filter>Source Files\game\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\FastPanzerKillSpree.cpp">
       <Filter>Source Files\game\cmd</Filter>
     </ClCompile>
   </ItemGroup>
