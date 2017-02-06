@@ -325,6 +325,10 @@ vmCvar_t	cg_optimizePrediction;
 // AndyStutz - turning ejecting panzer brass on/off
 vmCvar_t	cg_panzerejectbrass;
 
+// AndyStutz - used to track if sound playing is finished so it doesn't
+// get cut off by other high priority sounds.  
+int			timeuntildoneplayingsound;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -1370,6 +1374,9 @@ static void CG_RegisterSounds( void ) {
 
 	cgs.media.throwKnife_sound   = trap_S_RegisterSound( "sound/weapons/knife/knife_slash1.wav", qfalse );
 	cgs.media.throwMolotov_sound = trap_S_RegisterSound( "sound/weapons/grenade/gren_throw.wav", qfalse );
+
+	// AndyStutz - fastpanzer killing spree
+	cgs.media.fastpanzerkillingSpree[0] = trap_S_RegisterSound( "sound/killingspree/fastpanzerkillspreestart.wav", qfalse );
 
 	// Jaybird - killingspree and multikill
 	cgs.media.killingSpree[0] = trap_S_RegisterSound( "sound/killingspree/killspree1.wav", qfalse );
