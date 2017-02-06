@@ -22,7 +22,7 @@ Setvar::~Setvar()
 AbstractCommand::PostAction
 Setvar::doExecute( Context& txt )
 {
-    if (txt._args.size() > 3)
+    if (txt._args.size() > 4)
         return PA_USAGE;
 
     Buffer buf;
@@ -37,6 +37,12 @@ Setvar::doExecute( Context& txt )
     
 
     if (vartoset == "fastpanzer") {
+		// We do NOT allow fastpanzer changes while a killing spree is in effect
+		if (g_fastpanzerkillspreeon) {
+			txt._ebuf << "We don't allow fastpanzer changes while a killing spree is in effect.";
+			return PA_ERROR;
+		}
+
 		// Can't use string here because ubuntu compiler isn't version 11 so doesn't
 		// support stoi() method (string to int).  Have to use older atoi() which requires
 		// const char*
@@ -51,6 +57,33 @@ Setvar::doExecute( Context& txt )
 		}
 		else {
 			txt._ebuf << "Invalid fastpanzer count (should be between 0 and 10000, though realistically only uses value as high as 45): " << xvalue( txt._args[2] );
+			return PA_ERROR;
+		}
+    }
+    else if (vartoset == "fastpanzerplayer") {
+		// Can't use string here because ubuntu compiler isn't version 11 so doesn't
+		// support stoi() method (string to int).  Have to use older atoi() which requires
+		// const char*
+		const char *deathstoset = txt._args[2].c_str();
+		int iDeathsToSet = atoi(deathstoset);
+		if (iDeathsToSet >= 0 && iDeathsToSet <= 10000)
+		{
+			Client* target;
+			if (lookupPLAYER( txt._args[3], txt, target ))
+				return PA_ERROR;
+
+			if (isHigherLevelError( *target, txt ))
+				return PA_ERROR;
+
+			const User& targetUser = *connectedUsers[target->slot];
+			gentity_t* const targetEnt = &target->gentity;
+			targetEnt->client->sess.deathsforpanzerreload = iDeathsToSet;
+			// Notify user changes have been made
+			buf << _name << ": fastpanzer count has been set to " << xvalue( iDeathsToSet ) << '.';
+			printCpm( txt._client, buf, true );
+		}
+		else {
+			txt._ebuf << "Invalid fastpanzerplayer count (should be between 0 and 10000, though realistically only uses value as high as 45): " << xvalue( txt._args[2] );
 			return PA_ERROR;
 		}
     }
