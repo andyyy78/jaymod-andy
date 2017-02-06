@@ -145,6 +145,18 @@ typedef struct gentity_s gentity_t;
 typedef struct gclient_s gclient_t;
 typedef struct g_serverEntity_s g_serverEntity_t;
 
+// AndyStutz - Used for fastpanzer killspree client data tracking
+typedef struct fastpanzer_killspree_clientdata_s
+{
+	string	guid;
+	string	name;
+	int		deathsforpanzerreload;
+	team_t	team;
+	int		killspreekills;
+
+} fastpanzer_killspree_clientdata_t;
+
+
 //====================================================================
 //
 // Scripting, these structure are not saved into savegames (parsed each start)
@@ -1796,10 +1808,16 @@ void Props_Chair_Skyboxtouch (gentity_t *ent);
 
 #include "g_team.h" // teamplay specific stuff
 
+// AndyStutz - fastpanzer killspree client data tracking
+extern fastpanzer_killspree_clientdata_t g_FastPanzerKillSpreeClientData[];
+extern bool				g_fastpanzerkillspreeon;
+extern int				g_fastpanzerkillspreeclientnum;
+
 extern	level_locals_t	level;
 extern	gentity_t		g_entities[];
 extern	gclient_t		g_clients[];
 extern g_campaignInfo_t g_campaigns[];
+
 
 #define	FOFS(x) ((int)&(((gentity_t *)0)->x))
 
