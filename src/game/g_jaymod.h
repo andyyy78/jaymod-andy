@@ -27,6 +27,12 @@
 #define XPSAVE_RESETCAMPAIGN    2
 
 // Jaymod Cvars
+
+// AndyStutz - custom jaymod Cvars
+extern vmCvar_t	g_fastpanzerkillingSpree;
+extern vmCvar_t	g_fastpanzerkillSpreeLevels;
+// End
+
 extern vmCvar_t sv_uptime;
 extern vmCvar_t sv_uptimeStamp;
 extern vmCvar_t	g_privateMessages;
@@ -278,6 +284,9 @@ g_killingspree.cpp
 // Custom killingspree levels
 extern	int killspreeLevels[6];
 extern	int losespreeLevels[6];
+
+// AndyStutz
+extern int fastpanzerkillspreeLevels[1];
 
 // First/Last Kill
 void G_FirstBlood                ( gentity_t* );
