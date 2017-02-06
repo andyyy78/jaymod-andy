@@ -161,6 +161,12 @@ typedef enum {
 	KS_NUMLEVELS
 } ks_t;
 
+// AndyStutz - fastpanzerkillspree
+typedef enum {
+	FPKS_KILLINGSPREE,
+	FPKS_NUMLEVELS
+} fpks_t;
+
 typedef enum {
 	MK_DOUBLEKILL,
 	MK_MULTIKILL,
