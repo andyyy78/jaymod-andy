@@ -92,6 +92,11 @@ static char *ks_messages[] = {
 	"^2Wicked Sick!^7",
 };
 
+// AndyStutz - fastpanzer killing spree message
+static char *fpks_messages[] = {
+	"^2Fast Panzer Killing Spree Activated!^7",
+};
+
 static char *ls_messages[] = {
 	"^1Losing Spree!^7",
 	"^1You Suck!^7",
@@ -111,6 +116,23 @@ static void CG_KillingSpree(int level, int client, int kills) {
 
 	CG_KillSpreeMessages(cgs.clientinfo[client].name, kills, ks_messages[level]);
 	trap_S_StartSoundExVControl(NULL, cg.snap->ps.clientNum, CHAN_VOICE_BG, cgs.media.killingSpree[level], SND_CUTOFF_ALL, 255);
+}
+
+// AndyStutz
+static void CG_FastPanzerKillingSpree(int level, int client, int kills) {
+	if (!cg_killspreesounds.integer)
+		return;
+
+	// Check bounds on level
+	if (level < 0 || level >= 2)
+		return;
+
+	CG_KillSpreeMessages(cgs.clientinfo[client].name, kills, fpks_messages[level]);
+	// Here we're setting the game time at which we'll allow a multi kill or killing
+	// spree to sound (the end of the killing spree start sound).  This is so we don't 
+	// cut off the let's get ready to rumble sound.
+	cg_timeuntildoneplayingstartsound.integer = cg.time + trap_S_GetSoundLength( cgs.media.fastpanzerkillingSpree[level] );
+	trap_S_StartSoundExVControl(NULL, cg.snap->ps.clientNum, CHAN_VOICE_BG, cgs.media.fastpanzerkillingSpree[level], SND_CUTOFF_ALL, 255);
 }
 
 static void CG_LosingSpree(int level, int client, int kills) {
@@ -3024,16 +3046,28 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		CG_KillingSpree(es->density, es->eventParms[0], es->eventParms[1]);
 		break;
 
+	// AndyStutz
+	case EV_FASTPANZERKILLSPREE:
+		DEBUGNAME("EV_FASTPANZERKILLSPREE");
+		CG_FastPanzerKillingSpree(es->density, es->eventParms[0], es->eventParms[1]);
+		break;
+
 	case EV_LOSESPREE:
 		DEBUGNAME("EV_LOSESPREE");
-		CG_LosingSpree(es->density, es->eventParms[0], es->eventParms[1]);
+		// AndyStutz - only play the losing spree sound if the start sound of a fastpanzer
+		// killing spree has finished, otherwise the losing spree sound cuts it off
+		if (cg.time > cg_timeuntildoneplayingstartsound.integer)
+			CG_LosingSpree(es->density, es->eventParms[0], es->eventParms[1]);
 		break;
 
 	case EV_MULTIKILL:
 		DEBUGNAME("EV_MULTIKILL");
 		if (!cg_killspreesounds.integer)
 			break;
-		trap_S_StartSoundExVControl(NULL, cg.snap->ps.clientNum, CHAN_VOICE_BG, cgs.media.multikill[es->density], SND_CUTOFF_ALL, 255);
+		// AndyStutz - only play the multikill sound if the start sound of a fastpanzer
+		// killing spree has finished, otherwise the multikill sound cuts it off
+		if (cg.time > cg_timeuntildoneplayingstartsound.integer)
+			trap_S_StartSoundExVControl(NULL, cg.snap->ps.clientNum, CHAN_VOICE_BG, cgs.media.multikill[es->density], SND_CUTOFF_ALL, 255);
 		break;
 
 	case EV_FIRSTBLOOD:
