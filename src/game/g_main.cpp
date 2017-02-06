@@ -14,6 +14,12 @@ typedef struct {
 	qboolean	teamShader;			// track and if changed, update shader state
 } cvarTable_t;
 
+// AndyStutz - fastpanzer killspree client data tracking
+fastpanzer_killspree_clientdata_t g_FastPanzerKillSpreeClientData[MAX_CLIENTS];
+bool			g_fastpanzerkillspreeon=false;
+int				g_fastpanzerkillspreeclientnum=0;
+// End
+
 gentity_t		g_entities[MAX_GENTITIES];
 gclient_t		g_clients[MAX_CLIENTS];
 
@@ -190,6 +196,12 @@ vmCvar_t		g_disableComplaints;
 /*********************
 * Start Jaymod Cvars *
 *********************/
+
+// AndyStutz - Newly added for custom Jaymod
+vmCvar_t		g_fastpanzerkillingSpree;
+vmCvar_t		g_fastpanzerkillSpreeLevels;
+// End
+
 vmCvar_t		sv_uptime;
 vmCvar_t		sv_uptimeStamp;
 vmCvar_t		g_privateMessages;
@@ -369,6 +381,9 @@ cvarTable_t		gameCvarTable[] = {
 	{ &g_killingSpree,		"g_killingSpree",		"0",		CVAR_LATCH },
 	{ &g_killSpreeLevels,	"g_killSpreeLevels",	"",			0 },
 	{ &g_loseSpreeLevels,	"g_loseSpreeLevels",	"",			0 },
+	{ &g_fastpanzerkillingSpree,	"g_fastpanzerkillingSpree",	"0",	CVAR_LATCH },
+	{ &g_fastpanzerkillSpreeLevels,	"g_fastpanzerkillSpreeLevels",	"",			0 },
+
 
 	// Banners
 	{ &g_bannerTime,		"g_bannerTime",			"5",		CVAR_ARCHIVE },
