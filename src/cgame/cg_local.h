@@ -1694,6 +1694,9 @@ typedef struct {
 	sfxHandle_t	pmsound;
 	sfxHandle_t	counterTickSound;
 
+	// AndyStutz - fastpanzer killing spree
+	sfxHandle_t	fastpanzerkillingSpree[1];
+
 	// Jaybird - Hitsounds
 	sfxHandle_t hitsound_general;
 
@@ -2416,6 +2419,11 @@ extern	vmCvar_t		cg_optimizePrediction;
 
 // AndyStutz - Turns panzer brass eject on/off
 extern vmCvar_t			cg_panzerejectbrass;
+
+// AndyStutz - tracking if fastpanzer killing spree start sound is playing
+// We don't want to interrupt it with a multiple kill sound which is
+// very possible since we just gave them fast panzer reload
+extern int				timeuntildoneplayingsound;
 
 
 
