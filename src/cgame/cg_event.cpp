@@ -95,6 +95,7 @@ static char *ks_messages[] = {
 // AndyStutz - fastpanzer killing spree message
 static char *fpks_messages[] = {
 	"^2Fast Panzer Killing Spree Activated!^7",
+	"^2Badass Alert! Spree De-Activated Due To Kills!^7",
 };
 
 static char *ls_messages[] = {
@@ -131,8 +132,11 @@ static void CG_FastPanzerKillingSpree(int level, int client, int kills) {
 	// Here we're setting the game time at which we'll allow a multi kill or killing
 	// spree to sound (the end of the killing spree start sound).  This is so we don't 
 	// cut off the let's get ready to rumble sound.
-	timeuntildoneplayingsound = cg.time + trap_S_GetSoundLength( cgs.media.fastpanzerkillingSpree[level] );
-	trap_S_StartSoundExVControl(NULL, cg.snap->ps.clientNum, CHAN_VOICE_BG, cgs.media.fastpanzerkillingSpree[level], SND_CUTOFF_ALL, 255);
+	// Only play this particular sound at start
+	if (level == 0) {
+		timeuntildoneplayingsound = cg.time + trap_S_GetSoundLength( cgs.media.fastpanzerkillingSpree[level] );
+		trap_S_StartSoundExVControl(NULL, cg.snap->ps.clientNum, CHAN_VOICE_BG, cgs.media.fastpanzerkillingSpree[level], SND_CUTOFF_ALL, 255);
+	}
 }
 
 static void CG_LosingSpree(int level, int client, int kills) {
@@ -3043,7 +3047,9 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
 	case EV_KILLSPREE:
 		DEBUGNAME("EV_KILLSPREE");
-		CG_KillingSpree(es->density, es->eventParms[0], es->eventParms[1]);
+		// AndyStutz
+		if (cg.time > timeuntildoneplayingsound)
+			CG_KillingSpree(es->density, es->eventParms[0], es->eventParms[1]);
 		break;
 
 	// AndyStutz
