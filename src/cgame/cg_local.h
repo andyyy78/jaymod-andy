@@ -2417,12 +2417,9 @@ extern	vmCvar_t		cg_debugDelag;
 extern	vmCvar_t		cg_optimizePrediction;
 //unlagged - client options
 
-// AndyStutz - Turns panzer brass eject on/off
+// AndyStutz
 extern vmCvar_t			cg_panzerejectbrass;
-
-// AndyStutz - tracking if fastpanzer killing spree start sound is playing
-// We don't want to interrupt it with a multiple kill sound which is
-// very possible since we just gave them fast panzer reload
+extern vmCvar_t			cg_misslevolume;
 extern int				timeuntildoneplayingsound;
 
 
