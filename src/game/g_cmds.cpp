@@ -615,8 +615,6 @@ void Cmd_Kill_f( gentity_t *ent )
 
 	// Jaybird - #42 - /kill counts as a death
 	ent->client->sess.deaths++;
-	// AndyStutz
-	ent->client->sess.deathsforpanzerreload++;
 }
 
 void G_TeamDataForString( const char* teamstr, int clientNum, team_t* team, spectatorState_t* sState, int* specClient ) {
@@ -3520,6 +3518,77 @@ void Cmd_SwapPlacesWithBot_f( gentity_t *ent, int botNum ) {
 
 /*
 =================
+Cmd_Setvar_f
+=================
+*/
+void Cmd_Setvar_f( gentity_t *ent ) {
+
+	if (trap_Argc() <= 2) {
+		// Display different usage of setvar
+		string sbuf = "setvar usage: setvar VARIABLE VALUE\n----------------------------------------------------\n";
+		sbuf += "VARIABLE: fastpanzer\nVALUES: [25 - 10000]\n";
+		sbuf += "DESCRIPTION: Sets panzer reload time in milliseconds\n";
+		sbuf += "----------------------------------------------------\n";
+		sbuf += "VARIABLE: panzerrecoil\nVALUES: <on|off>\n";
+		sbuf += "DESCRIPTION: Turns on/off panzer recoil setting\n\n";
+		trap_SendServerCommand( ent-g_entities, va("print \"%s\"", sbuf.c_str()) );
+		return;
+	}
+
+	char	cmd[MAX_TOKEN_CHARS];
+	trap_Argv( 1, cmd, sizeof( cmd ) );
+    string vartoset = cmd;
+    str::toLower(vartoset);
+
+    if (vartoset == "fastpanzer") {
+		// We do NOT allow fastpanzer changes while a killing spree is in effect
+		if (g_fastpanzerkillspreeon) {
+			trap_SendServerCommand( ent-g_entities, "print \"We don't allow fastpanzer changes while a killing spree is in effect.\n\"" );
+			return;
+		}
+
+		char	cmdval[MAX_TOKEN_CHARS];
+		trap_Argv( 2, cmdval, sizeof( cmdval ) );
+	    string panzerreloadtimems = cmdval;
+	    str::toLower( panzerreloadtimems );
+		int ipanzerreloadtimems = atoi(panzerreloadtimems.c_str());
+		if (ipanzerreloadtimems >= 25 && ipanzerreloadtimems <= 10000)
+		{
+			ent->client->sess.panzerreloadtimems = ipanzerreloadtimems;
+			// Notify user changes have been made
+			trap_SendServerCommand( ent-g_entities, va("print \"fastpanzer reload time has been set to %ims\n\"", ipanzerreloadtimems) );
+		}
+		else {
+			trap_SendServerCommand( ent-g_entities, va("print \"Invalid fastpanzer reload time (should be between 25 and 10000): %i\n\"", ipanzerreloadtimems) );
+		}
+    }
+	else if (vartoset == "panzerrecoil") {
+		char	cmdval[MAX_TOKEN_CHARS];
+		trap_Argv( 2, cmdval, sizeof( cmdval ) );
+	    string panzerrecoil = cmdval;
+	    str::toLower( panzerrecoil );
+
+		if (panzerrecoil == "on" || panzerrecoil == "off")
+		{
+			bool bPanzerRecoil = (bool)(panzerrecoil == "on");
+			ent->client->sess.panzerrecoil = bPanzerRecoil;
+			// Notify user changes have been made
+			trap_SendServerCommand( ent-g_entities, va("print \"panzerrecoil has been turned %s\n\"", panzerrecoil.c_str()) );
+		}
+		else {
+			trap_SendServerCommand( ent-g_entities, va("print \"Invalid panzerrecoil value (should be 'on' or 'off'): %s\n\"", panzerrecoil.c_str()) );
+		}
+	}
+    else {
+		trap_SendServerCommand( ent-g_entities, va("print \"Invalid argument: %s\n\"", vartoset.c_str()) );
+    }
+
+	return;
+}
+
+
+/*
+=================
 ClientCommand
 =================
 */
@@ -3533,6 +3602,15 @@ void ClientCommand( int clientNum ) {
 	}
 
 	trap_Argv( 0, cmd, sizeof( cmd ) );
+
+	// AndyStutz
+	if (Q_stricmp (cmd, "setvar") == 0) {
+		//if(trap_Argc() < 2) 
+			//return;
+		//string sparams = ConcatArgs(1);
+		Cmd_Setvar_f(ent);
+		return;
+	}
 
 	if (Q_stricmp (cmd, "say") == 0) {
 		if( !connectedUsers[ent-g_entities]->muted ) {
