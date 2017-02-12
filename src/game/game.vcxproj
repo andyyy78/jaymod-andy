@@ -190,7 +190,6 @@
     <ClInclude Include="CensorDB.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="cmd\Bots.h" />
-    <ClInclude Include="cmd\FastPanzerKillSpree.h" />
     <ClInclude Include="cmd\Setvar.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Entity.h" />
@@ -357,7 +356,6 @@
     <ClCompile Include="CensorDB.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="cmd\Bots.cpp" />
-    <ClCompile Include="cmd\FastPanzerKillSpree.cpp" />
     <ClCompile Include="cmd\Setvar.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Engine.cpp">
@@ -382,6 +380,7 @@
     <ClCompile Include="g_cmds_ext.cpp" />
     <ClCompile Include="g_combat.cpp" />
     <ClCompile Include="g_config.cpp" />
+    <ClCompile Include="g_fastpanzerkillingspree.cpp" />
     <ClCompile Include="g_fireteams.cpp" />
     <ClCompile Include="g_items.cpp" />
     <ClCompile Include="g_jaymod.cpp" />
