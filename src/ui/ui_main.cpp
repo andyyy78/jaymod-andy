@@ -4761,8 +4761,12 @@ void UI_RunMenuScript(char **args) {
 			trap_Cmd_ExecuteText( EXEC_APPEND, va("callvote timelimit %f\n", trap_Cvar_VariableValue( "ui_voteTimelimit" ) ) );
 		} else if (Q_stricmp(name, "voteWarmupDamage") == 0) {
 			trap_Cmd_ExecuteText( EXEC_APPEND, va("callvote warmupdamage %d\n", (int)trap_Cvar_VariableValue( "ui_voteWarmupDamage" ) ) );
-
-		} else if (Q_stricmp(name, "refTimelimit") == 0) {
+		} 
+		// AndyStutz - adding vote for reload times
+		else if (Q_stricmp(name, "voteFastPanzerReloadTime") == 0) {
+			trap_Cmd_ExecuteText( EXEC_APPEND, va("callvote fastpanzerreloadtime %i\n", (int)trap_Cvar_VariableValue( "ui_voteFastPanzerReloadTime" ) ) );
+		} 
+		else if (Q_stricmp(name, "refTimelimit") == 0) {
 			trap_Cmd_ExecuteText( EXEC_APPEND, va("ref timelimit %f\n", trap_Cvar_VariableValue( "ui_voteTimelimit" ) ) );
 		} else if (Q_stricmp(name, "refWarmupDamage") == 0) {
 			trap_Cmd_ExecuteText( EXEC_APPEND, va("ref warmupdamage %d\n", (int)trap_Cvar_VariableValue( "ui_voteWarmupDamage" ) ) );
@@ -4774,6 +4778,10 @@ void UI_RunMenuScript(char **args) {
 
 				trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 				trap_Cvar_Set("ui_voteTimelimit", va("%i", atoi(Info_ValueForKey(info, "timelimit"))));
+
+				//int iFastPanzerReloadTime = (int)trap_Cvar_VariableValue("g_fastpanzerreloadtime");
+				//trap_Cvar_Set("ui_voteFastPanzerReloadTime", va("%i", (iFastPanzerReloadTime)));
+				//trap_Cvar_SetValue("ui_voteFastPanzerReloadTime", iFastPanzerReloadTime);
 
 		} else if (Q_stricmp(name, "voteLeader") == 0) {
 			if (uiInfo.teamIndex >= 0 && uiInfo.teamIndex < uiInfo.myTeamCount) {
@@ -8282,7 +8290,13 @@ vmCvar_t	ui_weapon;
 vmCvar_t	ui_isSpectator;
 
 vmCvar_t	ui_friendlyFire;
+
+// AndyStutz
 vmCvar_t	ui_bots;
+vmCvar_t	ui_fastpanzer;
+vmCvar_t	ui_fastpanzerkillspree;
+vmCvar_t	ui_fastpanzerdeathcalc;
+vmCvar_t	ui_fastpanzerreloadtime;
 
 vmCvar_t	ui_userTimeLimit;
 vmCvar_t	ui_userAlliedRespawnTime;
@@ -8341,7 +8355,13 @@ cvarTable_t		cvarTable[] = {
 
 	// NERVE - SMF
 	{ &ui_friendlyFire, "g_friendlyFire", "1", CVAR_ARCHIVE },
+
+	// AndyStutz
 	{ &ui_bots, "g_bots", "1", CVAR_ARCHIVE },
+	{ &ui_fastpanzer, "g_fastpanzer", "1", CVAR_ARCHIVE },
+	{ &ui_fastpanzerkillspree, "g_fastpanzerkillspree", "1", CVAR_ARCHIVE },
+	{ &ui_fastpanzerdeathcalc, "g_fastpanzerdeathcalc", "1", CVAR_ARCHIVE },
+	{ &ui_fastpanzerreloadtime, "g_fastpanzerreloadtime", "2000", CVAR_ARCHIVE },
 
 	{ &ui_userTimeLimit, "ui_userTimeLimit", "0", 0 },
 	{ &ui_userAlliedRespawnTime, "ui_userAlliedRespawnTime", "0", 0 },
@@ -8535,7 +8555,14 @@ cvarTable_t		cvarTable[] = {
 	{ NULL,	"vote_allow_shuffleteamsxp", "1", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_swapteams", "1", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_friendlyfire", "1", CVAR_ARCHIVE },
+
+	// AndyStutz
 	{ NULL,	"vote_allow_bots", "1", CVAR_ARCHIVE },
+	{ NULL,	"vote_allow_fastpanzer", "1", CVAR_ARCHIVE },
+	{ NULL,	"vote_allow_fastpanzerkillspree", "1", CVAR_ARCHIVE },
+	{ NULL,	"vote_allow_fastpanzerdeathcalc", "1", CVAR_ARCHIVE },
+	{ NULL,	"vote_allow_fastpanzerreloadtime", "1", CVAR_ARCHIVE },
+
 	{ NULL,	"vote_allow_timelimit", "0", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_warmupdamage", "1", CVAR_ARCHIVE },
 	{ NULL,	"vote_allow_antilag", "1", CVAR_ARCHIVE },
@@ -8571,8 +8598,9 @@ cvarTable_t		cvarTable[] = {
     { NULL, "ui_jaymod_repoLCRev",   JAYMOD_repoLCRev,   CVAR_ROM },
     { NULL, "ui_jaymod_repoUUID",    JAYMOD_repoUUID,    CVAR_ROM },
 
-	// AndyStutz - Turns panzer eject brass on/off
-	{ NULL, "cg_showpanzerejectbrass", "0", CVAR_ARCHIVE },
+	// AndyStutz
+	{ NULL, "cg_showpanzerejectbrass", "0", CVAR_USERINFO },
+	{ NULL, "cg_misslevolume", "50", CVAR_USERINFO },
 
 };
 
