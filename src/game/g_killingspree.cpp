@@ -24,8 +24,6 @@ a losing spree, kills must be a negative number.
 int		killspreeLevels[6] = { 5,	10,	15,	20,	25,	30 };
 int		losespreeLevels[6] = { 10,	20,	30,	0,	0,	0 };
 
-// AndyStutz
-int		fastpanzerkillspreeLevels[1] = { 5 };
 
 /*
 ===============
@@ -35,15 +33,6 @@ G_SendKillSpree
 static void G_SendKillSpree( gentity_t *client, ks_t ksLevel, int kills ) {
 	gentity_t* tent = G_TempEntity( vec3_origin, EV_KILLSPREE );
 	tent->s.density = ksLevel;
-	tent->s.eventParms[0] = client - g_entities;
-	tent->s.eventParms[1] = kills;
-	tent->r.svFlags = SVF_BROADCAST;
-}
-
-// AndyStutz
-static void G_SendFastPanzerKillSpree( gentity_t *client, fpks_t fpksLevel, int kills ) {
-	gentity_t* tent = G_TempEntity( vec3_origin, EV_FASTPANZERKILLSPREE );
-	tent->s.density = fpksLevel;
 	tent->s.eventParms[0] = client - g_entities;
 	tent->s.eventParms[1] = kills;
 	tent->r.svFlags = SVF_BROADCAST;
@@ -237,35 +226,12 @@ void G_AddKillSpree(gentity_t *ent) {
 	if( !g_killingSpree.integer )
 		return;
 
-	// We want to set a local bool here and not depend on global
-	// g_fastpanzerkillspreeon since it gets set within a server
-	// cmd append and we don't know exactly when it will get set
-	bool bFastPanzerRunning = false;
-
-	// AndyStutz
-	for (i = 0; i < FPKS_NUMLEVELS; i++) {
-		if (kills == fastpanzerkillspreeLevels[i]) {
-			G_SendFastPanzerKillSpree(ent, (fpks_t)i, kills);
-
-			// Now start the fastpanzerkillspree
-			string buffer = va("!fastpanzerkillspree start %d\n", ent->client->ps.clientNum);
-			trap_SendConsoleCommand( EXEC_APPEND, buffer.c_str() );
-
-			// Set our local bool indicating fastpanzerkillspree is on
-			bFastPanzerRunning = true;
+	// See if an announcement needs to be made
+	for (i = 0; i < KS_NUMLEVELS; i++) {
+		if (kills == killspreeLevels[i]) {
+			G_SendKillSpree(ent, (ks_t)i, kills);
 		}
 	}
-
-	// Only run killing spree if not running fastpanzer killing spree
-	if (!bFastPanzerRunning) {
-		// See if an announcement needs to be made
-		for (i = 0; i < KS_NUMLEVELS; i++) {
-			if (kills == killspreeLevels[i]) {
-				G_SendKillSpree(ent, (ks_t)i, kills);
-			}
-		}
-	}
-
 
 	// AndyStutz
 	// Update to strip pants on first killing spree as well
