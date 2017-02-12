@@ -4880,8 +4880,10 @@ void CG_FireWeapon( centity_t *cent ) {
 		if ( c > 0 ) {
 			c = rand() % c;
 			if ( firesound[c] ) {
-				trap_S_StartSound( NULL, ent->number, CHAN_WEAPON, firesound[c] );
-
+				// AndyStutz
+				//trap_S_StartSound( NULL, ent->number, CHAN_WEAPON, firesound[c] );
+				trap_S_StartSoundVControl( NULL, ent->number, CHAN_WEAPON, firesound[c], cg_misslevolume.integer );
+				
 				if(fireEchosound && fireEchosound[c])	// check for echo
 				{
 					centity_t	*cent;
@@ -4896,7 +4898,9 @@ void CG_FireWeapon( centity_t *cent ) {
 					if(gdist > 512 && gdist < 4096) {	// temp dist.  TODO: use numbers that are weapon specific
 						// use gorg as the new sound origin
 						VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);	// sound-on-a-stick
-						trap_S_StartSoundEx( gorg, ent->number, CHAN_WEAPON, fireEchosound[c], SND_NOCUT);
+						// AndyStutz
+						//trap_S_StartSoundEx( gorg, ent->number, CHAN_WEAPON, fireEchosound[c], SND_NOCUT);
+						trap_S_StartSoundExVControl( gorg, ent->number, CHAN_WEAPON, fireEchosound[c], SND_NOCUT, cg_misslevolume.integer);
 					}
 				}
 			}
@@ -5483,6 +5487,8 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, in
 	case VERYBIGEXPLOSION:
 	case WP_ARTY:
 	case WP_SMOKE_MARKER:
+		// AndyStutz
+		volume = cg_misslevolume.integer;
 		sfx = cgs.media.sfx_rockexp;
 		sfx2 = cgs.media.sfx_rockexpDist;
 		if( weapon == VERYBIGEXPLOSION || weapon == WP_ARTY ) {
@@ -5564,7 +5570,9 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, in
 		if(gdist > 1200 && gdist < 8000) {	// 1200 is max cam shakey dist (2*600) use gorg as the new sound origin
 			VectorMA(cg.refdef_current->vieworg, sfx2range, norm, gorg); // JPW NERVE non-distance falloff makes more sense; sfx2range was gdist*0.2
 																// sfx2range is variable to give us minimum volume control different explosion sizes (see mortar, panzerfaust, and grenade)
-			trap_S_StartSoundEx( gorg, -1, CHAN_WEAPON, sfx2, SND_NOCUT); 
+			// AndyStutz
+			//trap_S_StartSoundEx( gorg, -1, CHAN_WEAPON, sfx2, SND_NOCUT); 
+			trap_S_StartSoundExVControl( gorg, -1, CHAN_WEAPON, sfx2, SND_NOCUT, volume );
 		}
 	}
 
@@ -5660,7 +5668,9 @@ void CG_MissileHitWallSmall( int weapon, int clientNum, vec3_t origin, vec3_t di
 						7 + rand()%2 );	// count
 
 	if ( sfx ) {
-		trap_S_StartSound( origin, -1, CHAN_AUTO, sfx );
+		// AndyStutz
+		//trap_S_StartSound( origin, -1, CHAN_AUTO, sfx );
+		trap_S_StartSoundVControl( origin, -1, CHAN_AUTO, sfx, cg_misslevolume.integer );
 	}
 
 	//
