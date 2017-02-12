@@ -68,7 +68,14 @@ static const vote_reference_t aVoteInfo[] = {
 	{ 0x1ff, "unreferee",	 G_Unreferee_v,		"UNReferee",		" <player_id>^7\n  Elects a player to have admin abilities removed" },
 	{ 0x1ff, "warmupdamage", G_Warmupfire_v,	"Warmup Damage",	" <0|1|2>^7\n  Specifies if players can inflict damage during warmup" },
 	{ 0x1ff, "balancedteams",G_BalancedTeams_v,	"Balanced Teams",	" <0|1>^7\n  Toggles team balance forcing" },
+
+	// AndyStutz
 	{ 0x1ff, "bots",		 G_Bots_v,			"Bots",				" <0|1>^7\n  Adds/Removes bots" },
+	{ 0x1ff, "fastpanzer",	 G_FastPanzer_v,	"Fast Panzer",		" <0|1>^7\n  Turns Fast Panzer Settings On/Off" },
+	{ 0x1ff, "fastpanzerkillspree",	 G_FastPanzerKillSpree_v,	"Fast Panzer Killing Spree",		" <0|1>^7\n  Turns Fast Panzer Killing Sprees On/Off" },
+	{ 0x1ff, "fastpanzerdeathcalc",	 G_FastPanzerDeathCalc_v,	"Fast Panzer Death Calculation",		" <0|1>^7\n  Turns Fast Panzer Death Calculation On/Off" },
+	{ 0x1ff, "fastpanzerreloadtime",	 G_FastPanzerReloadTime_v,	"Fast Panzer Reload Time",		" <0|1>^7\n  Sets Fast Panzer Reload Time" },
+
 	{ 0, 0, NULL, 0 }
 };
 
@@ -893,6 +900,7 @@ int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 	return(G_OK);
 }
 
+// AndyStutz
 // *** Bots ***
 int G_Bots_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -905,7 +913,6 @@ int G_Bots_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 
 	// Vote action (vote has passed)
 	} else {
-		// Add Bots
 		G_voteSetOnOff("Bots", "g_bots");
 
 		if (atoi(level.voteInfo.vote_value))
@@ -929,6 +936,78 @@ int G_Bots_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 			trap_SendConsoleCommand( EXEC_APPEND, "bot maxbots 0\n" );
 			trap_SendConsoleCommand( EXEC_APPEND, "bot kickall\n" );
 		}
+	}
+
+	return(G_OK);
+}
+
+// AndyStutz
+// *** FastPanzer ***
+int G_FastPanzer_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if(arg) {
+		return(G_voteProcessOnOff(ent, arg, arg2, fRefereeCmd,
+									!!(g_fastpanzer.integer),
+									vote_allow_fastpanzer.integer,
+									dwVoteIndex));
+
+	// Vote action (vote has passed)
+	} else {
+		G_voteSetOnOff("Fast Panzer Settings", "g_fastpanzer");
+	}
+
+	return(G_OK);
+}
+
+// AndyStutz
+// *** FastPanzerKillSpree ***
+int G_FastPanzerKillSpree_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if(arg) {
+		return(G_voteProcessOnOff(ent, arg, arg2, fRefereeCmd,
+									!!(g_fastpanzerkillspree.integer),
+									vote_allow_fastpanzerkillspree.integer,
+									dwVoteIndex));
+
+	// Vote action (vote has passed)
+	} else {
+		G_voteSetOnOff("Fast Panzer Killing Sprees", "g_fastpanzerkillspree");
+	}
+
+	return(G_OK);
+}
+
+// AndyStutz
+// *** FastPanzerDeathCalc ***
+int G_FastPanzerDeathCalc_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if(arg) {
+		return(G_voteProcessOnOff(ent, arg, arg2, fRefereeCmd,
+									!!(g_fastpanzerdeathcalc.integer),
+									vote_allow_fastpanzerdeathcalc.integer,
+									dwVoteIndex));
+
+	// Vote action (vote has passed)
+	} else {
+		G_voteSetOnOff("Fast Panzer Death Calculation", "g_fastpanzerdeathcalc");
+	}
+
+	return(G_OK);
+}
+
+// *** FastPanzerReloadTime ***
+int G_FastPanzerReloadTime_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if(arg) {
+		Com_sprintf(level.voteInfo.vote_value, VOTE_MAXSTRING, "%s", arg2);
+	} else {
+		// Fast Panzer Reload Time Set
+		//G_voteSetVoteString("Timelimit");
+		G_voteSetValue("Fast Panzer Reload Time", "g_fastpanzerreloadtime");
 	}
 
 	return(G_OK);
