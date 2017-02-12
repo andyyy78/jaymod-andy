@@ -196,7 +196,6 @@ namespace builtins {
     DbLoad       dbLoad;
     DbSave       dbSave;
     Disorient    disorient;
-	FastPanzerKillSpree	fastpanzerkillspree;
     FTime        ftime;
     Finger       finger;
     Fling        fling;
