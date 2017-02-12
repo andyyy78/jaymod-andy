@@ -163,8 +163,8 @@ typedef enum {
 
 // AndyStutz - fastpanzerkillspree
 typedef enum {
-	FPKS_KILLINGSPREE,
-	FPKS_NUMLEVELS
+	FPKS_KILLINGSPREESTART,
+	FPKS_KILLINGSPREESTOP
 } fpks_t;
 
 typedef enum {
