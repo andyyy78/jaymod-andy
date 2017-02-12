@@ -526,7 +526,8 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit );
 	}
 
-	
+
+
 	//////////////////////////////////////////////////////////////////////////
 
 	// broadcast the death event to everyone
@@ -537,12 +538,22 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	ent->r.svFlags = SVF_BROADCAST;	// send to everyone
 
 
+	// Need to do this towards the end or when we move player back, it could
+	// happen before the death is calculated and incorrectly determine they
+	// were killed by teammate.
+	// UPDATE: Moving from end and changing method to move players right away
+	// instead of within event.  This causes the issue of displaying a team
+	// kill sometimes but it's better than the issue that was created by
+	// trying to fix this one, where the counts would be messed up or not 
+	// transfered back to the correct players.
 	// AndyStutz
 	// If fastpanzerkillspree is on, turn it off and restore all players to
 	// original teams and original fastpanzer settings
 	if (g_fastpanzerkillspreeon && g_fastpanzerkillspreeclientnum == self->client->ps.clientNum) {
-		string buffer = va("!fastpanzerkillspree stop %d\n", self->client->ps.clientNum);
-		trap_SendConsoleCommand( EXEC_APPEND, buffer.c_str() );
+		//string buffer = va("!fastpanzerkillspree stop %d\n", self->client->ps.clientNum);
+		//trap_SendConsoleCommand( EXEC_NOW, buffer.c_str() );
+		// Call new direct method
+		G_StopFastPanzerKillSpree();
 	}
 
 
@@ -640,6 +651,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			// a) exists
 			// b) isn't the one who died
 			G_EndLoseSpree(attacker);
+			// Run fastpanzer kill spree before regular kill spree as it will prevent
+			// kill spree sound from overriding fastpanzer kill spree sound
+			G_AddFastPanzerKillSpree(attacker);
 			G_AddKillSpree(attacker);
 			G_FirstBlood(attacker);
 			G_UpdateLastKill(attacker);
@@ -827,6 +841,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			limbo( self, qtrue );
 		}
 	}
+
 }
 
 qboolean IsHeadShotWeapon (int mod) {
