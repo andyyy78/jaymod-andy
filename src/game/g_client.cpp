@@ -2182,13 +2182,14 @@ ClientConnect( string& outmsg, int clientNum, qboolean firstTime, qboolean isBot
 
 
 	// AndyStutz - resetting session kills/deaths between map changes.  
-	// We still use session variable deathsforpanzerreload for tracking 
-	// fast panzer reloads as we don't reset this between team switches 
-	// or map loads.  Moved this here instead of ClientBegin as we only
+	// Moved this here instead of ClientBegin as we only
 	// want to reset between map loads, NOT when players change teams
 	// as excellent suggestion from Sn4cky. :D
 	client->sess.kills = 0;
 	client->sess.deaths = 0;
+
+	// Let's reset our panzer reload time to default between matches
+	client->sess.panzerreloadtimems = 2000;
 	// End AndyStutz
 
 
@@ -2467,6 +2468,9 @@ void ClientSpawn( gentity_t *ent, qboolean revived )
 	gclient_t* const client = ent->client;
 
 	G_UpdateSpawnCounts();
+
+	// AndyStutz - reset fastpanzer kill spree counter
+	ent->client->pers.fastpanzerkillspreekills = 0;
 
 	// Jaybird - reset kill spree counter
 	ent->client->pers.killspreekills = 0;
@@ -2830,8 +2834,10 @@ void ClientDisconnect( int clientNum ) {
 	// so players get reset back to their teams.
 	if (g_fastpanzerkillspreeon && g_fastpanzerkillspreeclientnum == ent->client->ps.clientNum)
 	{
-		string buffer = va("!fastpanzerkillspree stop %d\n", ent->client->ps.clientNum);
-		trap_SendConsoleCommand( EXEC_APPEND, buffer.c_str() );
+		//string buffer = va("!fastpanzerkillspree stop %d\n", ent->client->ps.clientNum);
+		//trap_SendConsoleCommand( EXEC_APPEND, buffer.c_str() );
+		// Call new direct method
+		G_StopFastPanzerKillSpree();
 	}
 
 
