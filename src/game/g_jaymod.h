@@ -29,9 +29,9 @@
 // Jaymod Cvars
 
 // AndyStutz - custom jaymod Cvars
-extern vmCvar_t	g_fastpanzerkillingSpree;
+// Now using g_fastpanzerkillspree which is part of a vote flag
+//extern vmCvar_t	g_fastpanzerkillingSpree;
 extern vmCvar_t	g_fastpanzerkillSpreeLevels;
-// End
 
 extern vmCvar_t sv_uptime;
 extern vmCvar_t sv_uptimeStamp;
@@ -285,9 +285,6 @@ g_killingspree.cpp
 extern	int killspreeLevels[6];
 extern	int losespreeLevels[6];
 
-// AndyStutz
-extern int fastpanzerkillspreeLevels[1];
-
 // First/Last Kill
 void G_FirstBlood                ( gentity_t* );
 void G_UpdateLastKill            ( gentity_t* );
@@ -302,6 +299,22 @@ void G_EndLoseSpree              ( gentity_t* );
 void G_AddMultiKill              ( gentity_t* );
 
 void G_LSFinalizeMap             ( );
+
+
+/*
+===================
+g_fastpanzerkillingspree.cpp
+===================
+*/
+
+// AndyStutz
+extern int fastpanzerkillspreeLevels[2];
+
+void G_AddFastPanzerKillSpree	( gentity_t* );
+void G_StartFastPanzerKillSpree	( gentity_t *ent );
+void G_StopFastPanzerKillSpree();
+int lookupplayerslot( const string& );
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
