@@ -232,17 +232,23 @@ void G_StopFastPanzerKillSpree()
 {
 	g_fastpanzerkillspreeon = false;
 	g_fastpanzerkillspreeclientnum = 0;
-
+	string sconnectedusers;
+	
 	// Loop through our vector of stored fastpanzerkillspreeclientdata
 	for (int i = 0; i < g_FastPanzerKillSpreeClientData.size(); i++) {
 		// Loop through our list of connected clients looking for the current
 		// fastpanzerkillspreeclientdata matching guid
 		for (int j = 0; j < MAX_CLIENTS; j++) {
-			User& currentuser = *connectedUsers[i];
+
+			// If we've already found this connected user, move to next
+			if (sconnectedusers.find(va(",%i,", j)) != -1)
+				continue;
+
+			User& currentuser = *connectedUsers[j];
 			if (currentuser == User::BAD)
 				continue;
 
-			int playerslot = lookupplayerslot( va("%d", i) );
+			int playerslot = lookupplayerslot( va("%d", j) );
 			if (playerslot == -1) // client match not found, continue
 				continue;
 
@@ -260,7 +266,9 @@ void G_StopFastPanzerKillSpree()
 
 			if (g_FastPanzerKillSpreeClientData[i].guid == currentuser.guid)
 			{
-				// Found our user so reset their settings
+				// Found our user so reset their settings and store in our string
+
+				sconnectedusers += va(",%i,", j);
 
 				// Restore fastpanzer setting
 				//buffer = va("!setvar fastpanzerplayer %d %d\n", g_FastPanzerKillSpreeClientData[j].deathsforpanzerreload, currentgclient->ps.clientNum);
