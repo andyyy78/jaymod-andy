@@ -4779,9 +4779,9 @@ void UI_RunMenuScript(char **args) {
 				trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 				trap_Cvar_Set("ui_voteTimelimit", va("%i", atoi(Info_ValueForKey(info, "timelimit"))));
 
-				//int iFastPanzerReloadTime = (int)trap_Cvar_VariableValue("g_fastpanzerreloadtime");
+				int iFastPanzerReloadTime = (int)trap_Cvar_VariableValue("g_fastpanzerreloadtime");
 				//trap_Cvar_Set("ui_voteFastPanzerReloadTime", va("%i", (iFastPanzerReloadTime)));
-				//trap_Cvar_SetValue("ui_voteFastPanzerReloadTime", iFastPanzerReloadTime);
+				trap_Cvar_SetValue("ui_voteFastPanzerReloadTime", iFastPanzerReloadTime);
 
 		} else if (Q_stricmp(name, "voteLeader") == 0) {
 			if (uiInfo.teamIndex >= 0 && uiInfo.teamIndex < uiInfo.myTeamCount) {
