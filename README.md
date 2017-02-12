@@ -6,13 +6,13 @@ Jaymod-Andy is essentially a modificaiton of the Jaymod Mod.  The aim is simply 
 
 Jaymod-Andy uses the latest release of Jaymod to build off of.  As of the time of this document, that release is 2.2.0.  Jaymod also is no longer in active development so chances are there won't be future Jaymod releases, only Jaymod-Andy.
 
-We also changed the way the Windows side development takes place.  Rather than using Mingw (like Jaymod does), Jaymod-Andy builds straight from Visual Studio (we used version 2010 Professional, but other similar versions should work as well).  If you wish to use Mingw like Jaymod does, you should still be able to do that.  There are some major issues that exist that we are working through - such as, currently you can only build debug builds from Visual Studio (release builds throw errors we haven't worked through yet).  You also may get errors when trying to build map files when compiling the solution.  Either turn map file building off or simply right click on the individual projects in the solution and you should be able to build them that way.  We will continue to address these issues in future releases.
+We also changed the way the Windows side development takes place.  Rather than using Mingw (like Jaymod does), Jaymod-Andy builds straight from Visual Studio (we used version 2010 Professional, but other similar versions should work as well).  If you wish to use Mingw like Jaymod does, you should still be able to do that.  Some issues may exist building, like when trying to build the solution.  But if you right click and individually build each project (cgame, ui and game), then they should build correctly.  If you get an error when building one of them, right click and build again and normally it will work fine.  If not, then you have an actual source code problem.
 
 We will also include some separate documentation that takes you step by step how to setup the build environment on a Windows PC soon.
 
 # Jaymod
 
-This is the source for the last release of Jaymod, which is version 2.0.0.
+This is the source for the last release of Jaymod, which is version 2.2.0.
 
 # Compiling
 
