@@ -4372,7 +4372,7 @@ FireWeapon
 ===============
 */
 void FireWeapon( gentity_t *ent ) {
-	int iCount, iDeathsMinusKills, iFinalDelay; // AndyStutz
+	int iDeathsMinusKills, iFinalDelay; // AndyStutz
 	float	aimSpreadScale;
 	int		shots = 1;
 	gentity_t *pFiredShot = 0; // Omni-bot To tell bots about projectiles
@@ -4605,43 +4605,58 @@ void FireWeapon( gentity_t *ent ) {
 	case WP_PANZERFAUST:
 
 		// AndyStutz - Changing weapon ready time to depend on kills and deaths
-		iCount = 2250; // starts out at one shot every xxxx milliseconds
 		iDeathsMinusKills = 1; // Default to 1 in case kills is more than deaths
 
-		//G_LogPrintf( "Deaths: %d, Kills: %d\n", ent->client->sess.deaths, ent->client->sess.kills);
-		// If deaths is greater than kills
-		//if (ent->client->sess.deathsforpanzerreload > ent->client->sess.kills)
-			//iDeathsMinusKills = ent->client->sess.deathsforpanzerreload - ent->client->sess.kills;
-
-		// This simply makes panzer reload faster with each death, regardless
-		// of how many kills you have
-		// Changing to simply move the delay down 50 milliseconds with each death until you
-		// get to 50.
-		/*
-		if ((ent->client->sess.deathsforpanzerreload * 50) < iCount)
-			ent->client->ps.weaponTime=(int)(iCount - (ent->client->sess.deathsforpanzerreload * 50));
-		else
-			ent->client->ps.weaponTime=50;
-		*/
-
-		// Changing to make first 5 deaths decrease by 250 milliseconds to see a more significant
-		// change early.  Then we'll start doing 50 milliseconds at a time after that...
-		if (ent->client->sess.deathsforpanzerreload < 5) {
-			iFinalDelay = iCount - (int)(ent->client->sess.deathsforpanzerreload * 250);
+		// If all FastPanzer settings disabled, set to default delay of 2000
+		if (!g_fastpanzer.integer) {
+			iFinalDelay = 2000;
 		}
 		else {
-			// Take 1250 for first 5 deaths and then another 50 for each additional death beyond that
-			// If final number < 25, set to 25 milliseconds as final.
-			iFinalDelay = iCount - (int)(1250 + ((ent->client->sess.deathsforpanzerreload - 5) * 50));
+
+			// Need to first determine if vote is enabled for a set panzer reload time, such
+			// as slow, medium, fast (which would be everyone using server variable), or if
+			// it's set to custom (in which case we would use individual client's custom
+			// session variable).
+			int ifastpanzerreloadtime;
+			if (g_fastpanzerreloadtime.integer == 0)
+				ifastpanzerreloadtime = ent->client->sess.panzerreloadtimems;
+			else
+				ifastpanzerreloadtime = g_fastpanzerreloadtime.integer;
+
+			// Only use the following calculations if panzerreloadusingdeathcount is enabled
+			//if (ent->client->sess.panzerreloadusingdeathcount)
+			if (g_fastpanzerdeathcalc.integer)
+			{
+				// Changing to make first 4 deaths decrease by 250 milliseconds to see a more significant
+				// change early.  Then we'll start doing 50 milliseconds at a time after that...
+				if (ent->client->sess.deaths < 4) {
+					//iFinalDelay = ent->client->sess.panzerreloadtimems - (int)(ent->client->sess.deaths * 250);
+					iFinalDelay = ifastpanzerreloadtime - (int)(ent->client->sess.deaths * 250);
+				}
+				else {
+					// Take 1000 for first 4 deaths and then another 50 for each additional death beyond that
+					// If final number < 25, set to 25 milliseconds as final.
+					//iFinalDelay = ent->client->sess.panzerreloadtimems - (int)(1000 + ((ent->client->sess.deaths - 4) * 50));
+					iFinalDelay = ifastpanzerreloadtime - (int)(1000 + ((ent->client->sess.deaths - 4) * 50));
+				}
+			}
+			else {
+				//iFinalDelay = ent->client->sess.panzerreloadtimems;
+				iFinalDelay = ifastpanzerreloadtime;
+			}
+
+			// If we're in the middle of a fastpanzer killing spree, we don't want to use deaths in calculating
+			// reload time, we just want to use the assigned panzerreloadtimems - so override whatever was set.
+			if (g_fastpanzerkillspreeon)
+				iFinalDelay = ent->client->sess.panzerreloadtimems;
 		}
 
+		// We don't allow the time between reloads to be less than 25ms. This is overkill enough.
 		if (iFinalDelay < 25)
 			iFinalDelay = 25;
 
 		ent->client->ps.weaponTime = iFinalDelay;
 			
-		//ent->client->ps.weaponTime=(int)(iCount / (ent->client->sess.deathsforpanzerreload+1));
-
 		// This makes panzer reload faster only if your death count is higher than
 		// your kill count
 		//ent->client->ps.weaponTime=(int)(iCount / iDeathsMinusKills);
