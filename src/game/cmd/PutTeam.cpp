@@ -58,14 +58,6 @@ PutTeam::doExecute( Context& txt )
     gentity_t* const targetEnt = &target->gentity;
     if (targetEnt->client->sess.sessionTeam == team) {
         txt._ebuf << xvalue( targetUser.namex ) << " is already on " << str::toString( team );
-		// If this is a move from fastpanzerkillspree for the kill spree player, we need to enable
-		// settings now.  We don't need to check the 4th argument, simply having a 4th means it
-		// was sent from the fastpanzerkillspree cmd
-		// UPDATE: We no longer change killspree players team so this is unecessary but commenting
-		// out for now as we test
-		//if (txt._args.size() == 4)
-		//	g_fastpanzerkillspreeon = true;
-
         return PA_ERROR;
     }
 
@@ -73,16 +65,6 @@ PutTeam::doExecute( Context& txt )
         txt._ebuf << "Unable to move player to team.";
         return PA_ERROR;
     }
-
-	// Player has now been moved, indicate the fastpanzerkillspree has started...
-	// If this is a move from fastpanzerkillspree for the kill spree player, we need to enable
-	// settings now.  We don't need to check the 4th argument, simply having a 4th means it
-	// was sent from the fastpanzerkillspree cmd
-	// UPDATE: We no longer change killspree players team so this is unecessary but commenting
-	// out for now as we test
-	//if (txt._args.size() == 4)
-	//	g_fastpanzerkillspreeon = true;
-
 
     Buffer buf;
     buf << _name << ": " << xvalue( targetUser.namex ) << " moved to " << str::toString( team );
