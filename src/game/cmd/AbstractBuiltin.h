@@ -31,7 +31,6 @@ private:
 #include <game/cmd/DbLoad.h>
 #include <game/cmd/DbSave.h>
 #include <game/cmd/Disorient.h>
-#include <game/cmd/FastPanzerKillSpree.h>
 #include <game/cmd/FTime.h>
 #include <game/cmd/Finger.h>
 #include <game/cmd/Fling.h>
@@ -110,7 +109,6 @@ namespace builtins {
     extern DbLoad       dbLoad;
     extern DbSave       dbSave;
     extern Disorient    disorient;
-	extern FastPanzerKillSpree	fastpanzerkillspree;
     extern FTime        ftime;
     extern Finger       finger;
     extern Fling        fling;
