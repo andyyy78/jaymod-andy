@@ -150,9 +150,10 @@ typedef struct fastpanzer_killspree_clientdata_s
 {
 	string	guid;
 	string	name;
-	int		deathsforpanzerreload;
+	int		panzerreloadtimems;
 	team_t	team;
 	int		killspreekills;
+	int		fastpanzerkillspreekills;
 
 } fastpanzer_killspree_clientdata_t;
 
@@ -683,8 +684,8 @@ typedef struct {
 	int			damage_received;
 	int			deaths;
 	
-	// AndyStutz - used for keeping fast panzers between map loads and team switches
-	int			deathsforpanzerreload;
+	// AndyStutz - how quickly panzer reloads (in milliseconds) - forcing minimum to 25ms.
+	int			panzerreloadtimems; 
 	// AndyStutz - used for turning panzer recoil on/off
 	bool		panzerrecoil;
 
@@ -819,6 +820,9 @@ typedef struct {
     int				characterIndex;
 
 	ipFilter_t		complaintips[MAX_COMPLAINTIPS];
+
+	// AndyStutz
+	int fastpanzerkillspreekills;
 
 	// jaybird
 	int killspreekills;
@@ -1809,7 +1813,7 @@ void Props_Chair_Skyboxtouch (gentity_t *ent);
 #include "g_team.h" // teamplay specific stuff
 
 // AndyStutz - fastpanzer killspree client data tracking
-extern fastpanzer_killspree_clientdata_t g_FastPanzerKillSpreeClientData[];
+extern vector<fastpanzer_killspree_clientdata_t> g_FastPanzerKillSpreeClientData;
 extern bool				g_fastpanzerkillspreeon;
 extern int				g_fastpanzerkillspreeclientnum;
 
@@ -1849,7 +1853,13 @@ extern	vmCvar_t	g_inactivity;
 extern	vmCvar_t	g_debugMove;
 extern	vmCvar_t	g_debugAlloc;
 extern	vmCvar_t	g_debugDamage;
+// AndyStutz
 extern  vmCvar_t	g_bots;
+extern	vmCvar_t	g_fastpanzer;
+extern	vmCvar_t	g_fastpanzerkillspree;
+extern	vmCvar_t	g_fastpanzerdeathcalc;
+extern	vmCvar_t	g_fastpanzerreloadtime;
+
 extern	vmCvar_t	voteFlags;
 
 // DHM - Nerve :: The number of complaints allowed before kick/ban
@@ -1975,7 +1985,14 @@ extern vmCvar_t		vote_allow_timelimit;
 extern vmCvar_t		vote_allow_warmupdamage;
 extern vmCvar_t		vote_allow_balancedteams;
 extern vmCvar_t		vote_allow_muting;
+
+// AndyStutz
 extern vmCvar_t		vote_allow_bots;
+extern vmCvar_t		vote_allow_fastpanzer;
+extern vmCvar_t		vote_allow_fastpanzerkillspree;
+extern vmCvar_t		vote_allow_fastpanzerdeathcalc;
+extern vmCvar_t		vote_allow_fastpanzerreloadtime;
+
 extern vmCvar_t		vote_limit;
 extern vmCvar_t		vote_percent;
 extern vmCvar_t		z_serverflags;
@@ -2626,7 +2643,13 @@ int G_Timelimit_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+// AndyStutz
 int G_Bots_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_FastPanzer_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_FastPanzerKillSpree_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_FastPanzerDeathCalc_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_FastPanzerReloadTime_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+
 
 void G_LinkDebris( void );
 void G_LinkDamageParents( void );
