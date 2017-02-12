@@ -15,7 +15,7 @@ typedef struct {
 } cvarTable_t;
 
 // AndyStutz - fastpanzer killspree client data tracking
-fastpanzer_killspree_clientdata_t g_FastPanzerKillSpreeClientData[MAX_CLIENTS];
+vector<fastpanzer_killspree_clientdata_t> g_FastPanzerKillSpreeClientData;
 bool			g_fastpanzerkillspreeon=false;
 int				g_fastpanzerkillspreeclientnum=0;
 // End
@@ -36,7 +36,14 @@ vmCvar_t	g_gametype;
 vmCvar_t	g_fraglimit;
 vmCvar_t	g_timelimit;
 vmCvar_t	g_friendlyFire;
+
+// AndyStutz
 vmCvar_t	g_bots;
+vmCvar_t	g_fastpanzer;
+vmCvar_t	g_fastpanzerkillspree;
+vmCvar_t	g_fastpanzerdeathcalc;
+vmCvar_t	g_fastpanzerreloadtime;
+
 vmCvar_t	g_password;
 vmCvar_t	sv_privatepassword;
 vmCvar_t	g_maxclients;
@@ -146,7 +153,14 @@ vmCvar_t		vote_allow_timelimit;
 vmCvar_t		vote_allow_warmupdamage;
 vmCvar_t		vote_allow_balancedteams;
 vmCvar_t		vote_allow_muting;
+
+// AndyStutz
 vmCvar_t		vote_allow_bots;
+vmCvar_t		vote_allow_fastpanzer;
+vmCvar_t		vote_allow_fastpanzerkillspree;
+vmCvar_t		vote_allow_fastpanzerdeathcalc;
+vmCvar_t		vote_allow_fastpanzerreloadtime;
+
 vmCvar_t		vote_limit;
 vmCvar_t		vote_percent;
 vmCvar_t		z_serverflags;
@@ -198,9 +212,9 @@ vmCvar_t		g_disableComplaints;
 *********************/
 
 // AndyStutz - Newly added for custom Jaymod
-vmCvar_t		g_fastpanzerkillingSpree;
+// Now using g_fastpanzerkillspree which is part of vote flag
+//vmCvar_t		g_fastpanzerkillingSpree;
 vmCvar_t		g_fastpanzerkillSpreeLevels;
-// End
 
 vmCvar_t		sv_uptime;
 vmCvar_t		sv_uptimeStamp;
@@ -381,7 +395,8 @@ cvarTable_t		gameCvarTable[] = {
 	{ &g_killingSpree,		"g_killingSpree",		"0",		CVAR_LATCH },
 	{ &g_killSpreeLevels,	"g_killSpreeLevels",	"",			0 },
 	{ &g_loseSpreeLevels,	"g_loseSpreeLevels",	"",			0 },
-	{ &g_fastpanzerkillingSpree,	"g_fastpanzerkillingSpree",	"0",	CVAR_LATCH },
+	// Now using g_fastpanzerkillspree which is a part of vote flags
+	//{ &g_fastpanzerkillingSpree,	"g_fastpanzerkillingSpree",	"0",	CVAR_LATCH },
 	{ &g_fastpanzerkillSpreeLevels,	"g_fastpanzerkillSpreeLevels",	"",			0 },
 
 
@@ -433,7 +448,13 @@ cvarTable_t		gameCvarTable[] = {
 	{ &g_timelimit, "timelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue },
 
 	{ &g_friendlyFire, "g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
+
+	// AndyStutz
 	{ &g_bots, "g_bots", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
+	{ &g_fastpanzer, "g_fastpanzer", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
+	{ &g_fastpanzerkillspree, "g_fastpanzerkillspree", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
+	{ &g_fastpanzerdeathcalc, "g_fastpanzerdeathcalc", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
+	{ &g_fastpanzerreloadtime, "g_fastpanzerreloadtime", "2000", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue, qtrue },
 
 	{ &g_teamForceBalance, "g_teamForceBalance", "0", CVAR_ARCHIVE  },							// NERVE - SMF - merge from team arena
 
@@ -541,7 +562,14 @@ cvarTable_t		gameCvarTable[] = {
 	{ &vote_allow_warmupdamage,	"vote_allow_warmupdamage", "1", 0, 0, qfalse, qfalse },
 	{ &vote_allow_balancedteams,"vote_allow_balancedteams", "1", 0, 0, qfalse, qfalse },
 	{ &vote_allow_muting,		"vote_allow_muting", "1", 0, 0, qfalse, qfalse },
+
+	// AndyStutz
 	{ &vote_allow_bots,			"vote_allow_bots", "1", 0, 0, qfalse, qfalse },
+	{ &vote_allow_fastpanzer,	"vote_allow_fastpanzer", "1", 0, 0, qfalse, qfalse },
+	{ &vote_allow_fastpanzerkillspree,	"vote_allow_fastpanzerkillspree", "1", 0, 0, qfalse, qfalse },
+	{ &vote_allow_fastpanzerdeathcalc,	"vote_allow_fastpanzerdeathcalc", "1", 0, 0, qfalse, qfalse },
+	{ &vote_allow_fastpanzerreloadtime,	"vote_allow_fastpanzerreloadtime", "1", 0, 0, qfalse, qfalse },
+
 	{ &vote_limit,		"vote_limit", "5", 0, 0, qfalse, qfalse },
 	{ &vote_percent,	"vote_percent", "50", 0, 0, qfalse, qfalse },
 
@@ -1620,7 +1648,9 @@ void G_UpdateCvars( void )
 						cv->vmCvar == &vote_allow_friendlyfire	|| cv->vmCvar == &vote_allow_timelimit		||
 						cv->vmCvar == &vote_allow_warmupdamage	|| 
 						cv->vmCvar == &vote_allow_balancedteams	|| cv->vmCvar == &vote_allow_muting			||
-						cv->vmCvar == &vote_allow_generic		|| cv->vmCvar == &vote_allow_bots
+						cv->vmCvar == &vote_allow_generic		|| cv->vmCvar == &vote_allow_bots			||
+						cv->vmCvar == &vote_allow_fastpanzer	|| cv->vmCvar == &vote_allow_fastpanzerkillspree	||
+						cv->vmCvar == &vote_allow_fastpanzerdeathcalc	|| cv->vmCvar == &vote_allow_fastpanzerreloadtime
 					) {
 						fVoteFlags = qtrue;
 					} else {
@@ -2674,6 +2704,7 @@ BeginIntermission
 ==================
 */
 void BeginIntermission( void ) {
+
 	int			i;
 	gentity_t	*client;
 
@@ -2845,6 +2876,18 @@ Append information about this game to the log file
 ================
 */
 void LogExit( const char *string ) {
+
+	// AndyStutz
+	// This seems like a good place for this
+	// If a fast panzer killing spree was running when the match ended, make sure
+	// we stop the killing spree so players are put back on their respective teams
+	// before the next match starts
+	if (g_fastpanzerkillspreeon)
+	{
+		G_StopFastPanzerKillSpree();
+	}
+
+
 	int				i;
 	gclient_t		*cl;
 	char			cs[MAX_STRING_CHARS];
