@@ -1057,9 +1057,9 @@ void CG_Missile( centity_t *cent ) {
 			}
 		} else {
 			vec3_t	velocity;
-
 			BG_EvaluateTrajectoryDelta( &cent->currentState.pos, cg.time, velocity, qfalse, -1 );
-			trap_S_AddLoopingSound( cent->lerpOrigin, velocity, weapon->missileSound, 255, 0 );
+			// AndyStutz - This is the sound the missle makes as it's fired
+			trap_S_AddLoopingSound( cent->lerpOrigin, velocity, weapon->missileSound, cg_misslevolume.integer, 0 );
 		}
 	}
 
