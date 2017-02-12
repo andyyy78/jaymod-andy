@@ -83,7 +83,9 @@ using cvar::Cvar;
 
 #define	SCORE_NOT_PRESENT	-9999	// for the CS_SCORES[12] when only one player is present
 
-#define	VOTE_TIME			30000	// 30 seconds before vote times out
+// AndyStutz
+//#define	VOTE_TIME			30000	// 30 seconds before vote times out
+#define	VOTE_TIME			15000	// Changing to 15 seconds
 
 // Ridah, disabled these
 //#define	MINS_Z				-24
