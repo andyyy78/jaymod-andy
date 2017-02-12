@@ -5111,7 +5111,12 @@ const voteType_t voteToggles[] =
 		{ "vote_allow_generic",			CV_SVF_GENERIC },
 		{ "vote_allow_matchrestart",	CV_SVF_MATCHRESTART },
 		{ "vote_allow_startmatch",		CV_SVF_STARTMATCH },
-		{ "vote_allow_bots",			CV_SVF_BOTS }
+		// AndyStutz
+		{ "vote_allow_bots",			CV_SVF_BOTS },
+		{ "vote_allow_fastpanzer",		CV_SVF_FASTPANZER },
+		{ "vote_allow_fastpanzerkillspree",		CV_SVF_FASTPANZERKILLSPREE },
+		{ "vote_allow_fastpanzerdeathcalc",		CV_SVF_FASTPANZERDEATHCALC },
+		{ "vote_allow_fastpanzerreloadtime",		CV_SVF_FASTPANZERRELOADTIME },
 	};
 
 int numVotesAvailable = sizeof(voteToggles) / sizeof(voteType_t);
