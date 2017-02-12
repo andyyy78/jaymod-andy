@@ -325,8 +325,15 @@ vmCvar_t	cg_optimizePrediction;
 // AndyStutz - turning ejecting panzer brass on/off
 vmCvar_t	cg_panzerejectbrass;
 
-// AndyStutz - used to track if sound playing is finished so it doesn't
-// get cut off by other high priority sounds.  
+// AndyStutz - client cvar to control volume of panzer rocket effects
+// when fastpanzer is enabled. This was mainly done because it's too 
+// loud if you have fastpanzer on and it drowns out any other sounds/music playing
+// Setting can be between 0 and 255
+vmCvar_t	cg_misslevolume;
+
+// AndyStutz - tracking if fastpanzer killing spree start sound is playing
+// We don't want to interrupt it with a multiple kill sound which is
+// very possible since we just gave them fast panzer reload
 int			timeuntildoneplayingsound;
 
 
@@ -588,8 +595,9 @@ cvarTable_t		cvarTable[] = {
 	{ &cl_waveoffset, "cl_waveoffset", "0", CVAR_ROM },
 	{ &cg_recording_statusline, "cg_recording_statusline", "9", CVAR_ARCHIVE },
 
-	// AndyStutz - Turn panzer brass eject on/off
-	{ &cg_panzerejectbrass, "cg_showpanzerejectbrass", "0", CVAR_ARCHIVE },
+	// AndyStutz
+	{ &cg_panzerejectbrass, "cg_showpanzerejectbrass", "0", CVAR_USERINFO },
+	{ &cg_misslevolume, "cg_misslevolume", "50", CVAR_USERINFO },
 
 };
 
