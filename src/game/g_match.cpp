@@ -256,8 +256,6 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 		if(targ->health <= 0) {
 			attacker->client->sess.kills++;
 			targ->client->sess.deaths++;
-			// AndyStutz
-			targ->client->sess.deathsforpanzerreload++;
 		}
 	}
 
@@ -683,6 +681,9 @@ int G_checkServerToggle(vmCvar_t *cv)
 	else if(cv == &g_antilag) nFlag = CV_SVS_ANTILAG;
 	else if(cv == &g_balancedteams) nFlag = CV_SVS_BALANCEDTEAMS;
 	else if(cv == &g_bots) nFlag = CV_SVS_BOTS;
+	else if(cv == &g_fastpanzer) nFlag = CV_SVS_FASTPANZER;
+	else if(cv == &g_fastpanzerkillspree) nFlag = CV_SVS_FASTPANZERKILLSPREE;
+	else if(cv == &g_fastpanzerdeathcalc) nFlag = CV_SVS_FASTPANZERDEATHCALC;
 	// special case for 2 bits
 	else if(cv == &match_warmupDamage) {
 		if(cv->integer > 0) {
