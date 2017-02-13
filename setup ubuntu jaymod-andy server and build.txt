@@ -1,0 +1,105 @@
+- Install ubuntu 16.04
+
+- Run the following to get support for 32bit builds/binaries
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install libc6:i386 libdrm2:i386 libexpat1:i386 libgcc1:i386 libgl1-mesa-glx:i386 libglapi-mesa:i386 libglu1-mesa:i386 libstdc++6:i386 libx11-6:i386 libx11-xcb1:i386 libxau6:i386 libxcb1:i386 libxcb-dri2-0:i386 libxcb-dri3-0:i386 libxcb-glx0:i386 libxcb-present0:i386 libxcb-sync1:i386 libxdamage1:i386 libxdmcp6:i386 libxext6:i386 libxfixes3:i386 libxshmfence1:i386 libxxf86vm1:i386 libasound2:i386 libasound2-plugins:i386
+
+- Download Enemy Territory install package by entering...
+wget http://filebase.trackbase.net/et/full/et260b.x86_full.zip
+
+- Install zip
+sudo apt-get install zip
+
+- Extract contents of ET zip file
+unzip et260b.x86_full.zip
+
+- Install dialog
+sudo apt-get install dialog
+
+- Run install as root
+sudo ./et260b
+
+NOTE:
+Accept default options. 
+No need to read file and choose yes when it asks about punkbuster server/client files.
+Choose no when it asks about startup menu entries.
+
+- I disable the local system firewall since it's behind the Amazon web services security firewall
+sudo ufw disable
+
+- Download ET 3.00 server binary for Linux
+wget http://filebase.trackbase.net/et/server/et300
+
+- Now copy this file to /usr/local/games/enemy-territory
+sudo mv et300 /usr/local/games/enemy-territory/et300
+
+- Now go to the /usr/local/games/enemy-territory folder and change the permissions on the et300 file
+cd /usr/local/games/enemy-territory
+chmod 0755 et300
+
+- Copy etded300 to /usr/local/games/enemy-territory
+- chmod 0755 on etded300
+
+- Create .etwolf folder in /home/usr folder
+- Create etmain folder in .etwolf folder and copy map files you want to include on server
+- Create jaymod folder in .etwolf folder and copy server files you need to run jaymod (pk3, binaries, configs, etc...)
+
+#### BUILDING ET ####
+
+- Install subversion
+sudo apt-get install subversion
+
+- Get latest from jaymod-andy github
+svn checkout https://github.com/andyyy78/jaymod-andy.git
+NOTE: Do this from the /home/user folder
+
+- Install make
+sudo apt-get install make
+
+- Install Build Essentials
+sudo apt-get install build-essential
+
+- Install M4 (might not be necessary)
+sudo apt-get install m4
+
+- Install libc6-dev-i386 package for 32bit builds on a 64bit OS
+sudo apt-get install libc6-dev-i386
+
+- Install more build packages needed for building 32bit on 64bit OS
+sudo apt-get install gcc-multilib g++-multilib
+
+- Go to /home/user/jaymod-andy.git/branch/andyhead
+NOTE: I renamed the jaymod-andy.git folder to jaymod-andy as I don't like the .git in the folder name
+
+- Try building a release (clean first, then make)
+make VARIANT=release clean
+make VARIANT=release
+
+You shouldn't see the following error as I implemented a fix in the latest source...
+error: ‘close’ was not declared in this scope
+
+But if you do, you simply need to edit the file /src/bgame/linux/process.cpp
+And add the following include...
+#include <unistd.h>
+
+Once you have a completed build, you need to package up the pk3 with your built cgame and ui binaries for both the linux machine and from the Windows machine you built from.  But you will only use the built game binary (server binary) from the machine you plan to run the server from (either Windows or Linux).  The pk3 and server binary need to be copied to the .etwolf/jaymod folder and then you need to run the server.
+
+NOTE: HELPERS RUNNING SERVER...
+
+I create a custom shell script file called runjaymod300.sh in my home directory that I can call to launch my server.  It contains the following...
+
+exec /usr/local/games/enemy-territory/etded300 +set com_hunkmegs 512 +set fs_game jaymod +exec server.cfg
+
+In my /usr/local/games/enemy-territory folder I have the etded300 file that I'm calling.  It simply contains the following...
+
+#!/bin/sh
+# Needed to make symlinks/shortcuts work.
+# the binaries must run with correct working directory
+cd "/usr/local/games/enemy-territory/"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
+exec ./et300 "$@"
+
+Both of these files should have chmod 0755
+
+

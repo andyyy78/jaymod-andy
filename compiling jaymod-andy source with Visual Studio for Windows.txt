@@ -1,0 +1,58 @@
+- Start with OS: Windows 7 Ultimate 32bit machine (use whatever Windows version you want)
+NOTE: I was using a win7 utlimate 32bit machine image on VirtualBox software which was running on my Windows 10 64bit laptop.  If you've never used VirtualBox, it's awesome! Allows you to run any OS (I have Linux, Mac OS and Windows images) on your Windows machine just like the real thing with tons of options.  Great for testing and developing but you'll obviously need the OS to install when you create a new image.
+
+- Then install copy of Visual Studio 2010 Professional.
+NOTE: Older versions (2005) I believe will work.  I have the newer 2015 version but decided to use the older 2010 as trying to port over really old projects can end up being more work when trying to migrate to a newer version.  So 2015 might work just fine as well but I never tested with it since 2010 worked great for me (plus it runs quite a bit faster as well since the UI isn't as big or feature rich with features I don't need for this project).  I used the professional version because I have an MSDN subscription which gives me one for free but you would have to pay for a professional copy (or obtain by other means ;)).  But I believe the express version (free) should work as well - but again, I didn't test it so if you use a different version than me, you might run into different issues you have to work through.
+
+- Next install AnkhSVN for Visual Studio in order to have source control management.
+  NOTE: Should be found here - https://ankhsvn.open.collab.net/
+
+- Now open up Visual Studio and you should have a new option under File->Open->Subversion Project
+  - Select this option and enter the git repositroy for the latest Jaymod-Andy source
+  - It should be: https://github.com/andyyy78/jaymod-andy.git
+  - Then browse the repository for the .sln file (Jaymod.sln).  There is one in the master branch but you want to use the one in the Andyhead branch as this is the branch with the latest Jaymod-Andy source, which is located under /branches/andyhead/src/Jaymod.sln
+  - Leave the default options but feel free to change the location on your hard drive where you want to store the source project (it defaults to under the Visual Studio projects folder and in a Jaymod sub-folder).
+  - When you click Ok it will checkout and download the src to this directory and then start the Visual Studio conversion wizard if you have a newer version of Visual Studio.
+  - Click next and choose NOT to create a backup (it's not necessary as we can always checkout the latest source again if needed) and then click Finish.
+  - Feel free to read the conversion log to make sure there are no errors (warnings are usually fine).
+
+- Now you can build the project but here's the thing - Jaymod was designed to be built with the Mingw cross compiler, not with Visual Studio.  So this is where you can try to install Mingw and get it to work properly (I tried with Mingw and through cygwin and had multiple issues with both).  It was a pain but if you can get it to build this way, it's preferred.  Essentially Visual Studio would only be used as your IDE editor, not your compiler in this instance.  So if you want to tackle this task feel free - but I wasn't able to get it working all the way.
+  - However, because Jaymod developers didn't design the mod to be built with Visual Studio alone, it won't build right out of the box without modifications.  Go ahead and right click on the solution and choose to build it and see if you get errors.  Because I have addresses most issues you shouldn't see any errors.  But just in case you do, here's some info on what you might see...
+
+fatal error C1083: Cannot open include file: 'base/project.h': No such file or directory
+
+The problem is that this file is supposed to be automatically generated during the build process based on which OS you're building for.  Since we're strictly in a Windows environment trying to use Visual Studio to build, the pre-build options are being executed and some of the auto generation of files isn't happening.  So we need to create this file ourselves.  Even though I wasn't able to successfully build all the way with Mingw, I was able to get it to work enough to generate this file so I could copy it and paste it for use with a Visual Studio build.  I've done this and included it in source so it should work for you.  In the /src/base directory there is a release and debug version of this file for Windows (currently the project.h file is for the release build but works for release or debug builds).
+
+If for some reason you see this error, make sure /src/base/project.h exists and if not, copy the release or debug version (again, it doesn't matter which as they both work for either one) and rename to project.h in this directory.
+
+You should get further but may see that 2 projects built and 3 failed.  There are 2 problems still left.  One has to do with a post-build task of copying files to a folder that doesn't exist and the other has to do with generating map files.
+
+So first, to fix the post-build file copy problem, you need to right click on the cgame project and click Properties.  Drop down Build Events and select Post-Build Event.  Where it says "Use In Build" drop down the value to say No.  Click OK to save this.
+Now, repease the same procedure for both the "game" project and the "ui" project and that will take care of the post-build issue.
+(again, this step has already been done so in theory you shouldn't have to do this)
+
+Last is a problem of generating map files.  At this point, you can actually choose to rebuild the solution and you'll see that the 2 projects completed successfully and the 3 failed.  But you can simply right click on the "cgame" project and choose to build and it will complete successfully.  Then follow the same steps for the "game" and "ui" projects.  You will find the compiled binaries in the /src/Debug folder...
+The "game" project (or binary that runs an ET server) is: qagame_mp_x86.dll
+The "cgame" project (or binary that runs an ET client) is: cgame_mp_x86.dll
+And the "ui" project (or binary that runs the ET client UI) is: ui_mp_x86.dll
+
+But if you would rather not have to individually run these builds each time and you want them all to build successfully when you run a solution build, you can simply disable generating map files.  I believe map files are only used when actually attaching to the binaries when running to debug code and using intellisense stuff, so not sure how much it matters to have them (I'm sure a quick Google search would help clarify).  But if you wanted to disable it, simply right click on the "cgame" project and select Properties.  Then go to Linker and Debugging and change the option "Generate Map File" to "No".  
+Repeat this procedure for both the "game" and "ui" projects.
+Then you should be able to build the solution and have it build the binaries for all projects fine.
+Otherwise (like I do), just deal with right clicking and building the projects individually since there are only 3.
+
+NOTES ON DEBUGGING:
+
+In order to debug the server, sometimes you need to catch breakpoints before you have time to attach to the running server after it's launched.  In this case, you need to launch the server as part of the Visual Studio debug process.  In order to do this, right click on the Jaymod solution and choose to "Add Existing Project".  Then select the ET server executable from wherever you're running it (most likely the "C:\Program Files\Wolfenstein - Enemy Territory" folder).  It will either be the etded.exe if using the default ET server executable, or WolfDED.exe if using ET 3.00 server executable.  Select the executable and then right click on it in Solution Exlorer and choose Properties.  Under the Parameters change the Arguments to the parameters you would normally use to start your server...
+for example, mine is: +set com_hunkmegs 512 +set fs_game jaymod +exec server.cfg
+Now you can right click on this newly added project and select Debug -> Start New Instance.  It will launch your server and any breakpoints you have set in code will be hit so you can debug at any point.
+
+As a side note, I have only been able to debug server code (the game project), anytime I try to attach to a debug build of the client code (attaching to et.exe) it immediately breaks with an error.
+
+Hope all this helps get you up and running! Let me know if you have any problems.
+
+My email is: andy@stutzmanplace.com
+
+
+
+
